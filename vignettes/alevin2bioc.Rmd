@@ -21,6 +21,46 @@ vignette: >
 
 ## Introduction
 
+*alevin* is a method for ... [@alevin]. It extends the methods in the
+*Salmon* software [@salmon].
+
+The data we will use is ... (citation).
+
+## Running alevin
+
+In order to run *alevin*, we must first ...
+
+Instructions on downloading *alevin* can be found here ...
+
+Instructions on indexing a set of reference transcripts can be found
+here ...
+
+## Importing alevin quantification with tximeta
+
+We will use *tximeta* ... [@tximeta].
+
+First we specify the path where the quantification data is stored. In
+this tutorial, the data is stored in an R package, so we need to use
+the `system.file` command. For typical use, you would not use
+`system.file`, but would just specify the path to the directory of the
+output from *alevin*. 
+
+```{r}
+# normally you just would use:
+# dir <- "/path/to/alevin/output"
+dir <- system.file("extdata/pbmc_1k", package="alevin2bioc")
+```
+
+```{r}
+files <- file.path(dir, "alevin", "quants_mat.gz")
+file.exists(files)
+```
+
+```{r}
+library(tximeta)
+se <- tximeta(files, type="alevin")
+```
+
 ## Links for further reading
 
 ## References
