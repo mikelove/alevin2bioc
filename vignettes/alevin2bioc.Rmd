@@ -58,7 +58,21 @@ file.exists(files)
 
 ```{r}
 library(tximeta)
-se <- tximeta(files, type="alevin")
+se <- tximeta(files, type="alevin", alevinArgs=list(filterBarcodes=TRUE))
+```
+
+```{r}
+library(SingleCellExperiment)
+sce <- as(se, "SingleCellExperiment")
+```
+
+```{r}
+library(org.Hs.eg.db)
+sce <- addIds(sce, "SYMBOL")
+```
+
+```{r}
+mcols(sce)
 ```
 
 ## Links for further reading
