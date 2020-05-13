@@ -1,0 +1,26 @@
+---
+output:
+  rmarkdown::html_document:
+    highlight: pygments
+    toc: true
+    toc_depth: 3
+    fig_width: 5
+bibliography: "`r file.path(system.file(package='alevin2bioc', 'vignettes'), 'library.bib')`"
+vignette: >
+  %\VignetteIndexEntry{alevin2bioc}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding[utf8]{inputenc}
+---
+
+# Tutorial for importing alevin scRNA-seq quantifications into R/Bioconductor
+
+## Instructor(s) name(s) and contact information
+
+[Michael Love](https://mikelove.github.io),
+[Avi Srivastava](https://k3yavi.github.io)
+
+## Introduction
+
+## Links for further reading
+
+## References
