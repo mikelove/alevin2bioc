@@ -11,11 +11,10 @@
     ],
     "index": "../alevin/indices/rna_index",
     "output": "quant_1k",
-    "tgMap": "../alevin/meta/txp2gname.txt",
+    "tgMap": "../alevin/meta/txp2gene.tsv",
     "chromiumV3": [],
     "numCellBootstraps": "30",
-    "dumpFeatures": [],
-    "dumpBfh": [],
     "threads": "12",
+    "dumpBfh": [],
     "auxDir": "aux_info"
 }
