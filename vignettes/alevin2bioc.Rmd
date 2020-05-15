@@ -37,7 +37,7 @@ here ... For this experiment, we used the
 [GENCODE](https://www.gencodegenes.org/) 
 human reference transcripts [@gencode].
 
-## Importing alevin quantification with tximeta
+## Importing alevin data with tximeta
 
 We will use *tximeta* ... [@tximeta].
 
@@ -59,6 +59,15 @@ files <- file.path(dir, "alevin", "quants_mat.gz")
 file.exists(files)
 ```
 
+```{r echo=FALSE}
+suppressPackageStartupMessages(library(GenomicFeatures))
+```
+
+We can import the *alevin* quantification using the following call to
+`tximeta`. The extra argument to *alevin* will filter out cells based
+on *alevin*'s post-quantification quality control methods (see paper
+for details).
+
 ```{r}
 library(tximeta)
 se <- tximeta(files, type="alevin", alevinArgs=list(filterBarcodes=TRUE))
@@ -70,7 +79,7 @@ easily convert this object into a *SingleCellExperiment*
 experiment data.
 
 ```{r}
-library(SingleCellExperiment)
+suppressPackageStartupMessages(library(SingleCellExperiment))
 sce <- as(se, "SingleCellExperiment")
 ```
 
@@ -119,6 +128,21 @@ sce$cluster <- ids[colnames(sce)]
 table(sce$cluster)
 ```
 
+Note that the different clusters have different total counts, for
+example:
+
+```{r}
+cs <- colSums(assays(sce)[["counts"]])
+# cells with higher number of UMI
+more.umi <- cs > 10000
+(tab <- table(more.umi, sce$cluster))
+100 * round(prop.table(tab,2),2) # percent
+# cell with lower number of UMI
+fewer.umi <- cs < 5000
+(tab <- table(fewer.umi, sce$cluster))
+100 * round(prop.table(tab,2),2) # percent
+```
+
 ```{r}
 head(top10)
 ```
@@ -134,7 +158,6 @@ o <- order(colSums(assays(sce)[["counts"]]), decreasing=TRUE)
 sce <- sce[,o]
 ```
 
-
 ```{r plot-basic}
 library(fishpond)
 plotInfReps(sce, idx="ENSG00000167286.9",
@@ -143,13 +166,15 @@ plotInfReps(sce, idx="ENSG00000167286.9",
 ```
 
 ```{r plot-medium}
-plotInfReps(sce[,sample(ncol(sce),200)], idx="ENSG00000167286.9",
+plotInfReps(sce[,sample(ncol(sce),200)],
+            idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
             legend=TRUE)
 ```
 
 ```{r plot-small}
-plotInfReps(sce[,sample(ncol(sce),100)], idx="ENSG00000167286.9",
+plotInfReps(sce[,sample(ncol(sce),100)],
+            idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
             legend=TRUE)
 ```
@@ -157,12 +182,34 @@ plotInfReps(sce[,sample(ncol(sce),100)], idx="ENSG00000167286.9",
 ```{r plot-no-order}
 plotInfReps(sce, idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
-            legend=TRUE, reorder=FALSE)
+            reorder=FALSE)
 ```
 
 ## Scaling with size factors
 
-## Variance over mean for all cells
+We use `computeSumFactors` [@Lun2016] from the *scran* package
+[@scran] ...
+
+```{r size-factors}
+library(scran)
+sce <- computeSumFactors(sce, clusters=sce$cluster)
+plot(cs, sizeFactors(sce), xlab="column sum", ylab="sum factor")
+```
+
+```{r scaling}
+par(mfrow=c(2,1), mar=c(2.5,4.5,1,1))
+plotInfReps(sce, idx="ENSG00000167286.9",
+            x="cluster", main="",
+            reorder=FALSE)
+plotInfReps(sce, idx="ENSG00000167286.9",
+            x="cluster", main="",
+            applySF=TRUE, reorder=FALSE)
+```
+
+## Inferential variance (uncertainty)
+
+Inferential variance is a focus of the *Swish* nonparametric
+statistical method [@swish] which we do not demonstrate here ...
 
 ```{r}
 var <- as.vector(assays(sce)[["variance"]])
@@ -172,11 +219,60 @@ df <- data.frame(log10mean=log10(mu[idx]),
                  log10var=log10(var[idx]))
 ```
 
-```{r var-mean}
+```{r var-mean, fig.height=4}
 library(ggplot2)
 ggplot(df, aes(log10mean, log10var)) +
-  geom_hex(bins=100) +
+  geom_hex(bins=100) + 
   geom_abline(intercept=0, slope=1, col="red")
+```
+
+```{r}
+rratio <- rowMeans(assays(sce)[["variance"]] /
+                   (assays(sce)[["mean"]] + 1))
+rmu <- rowMeans(assays(sce)[["mean"]])
+idx <- rmu > 3
+df <- data.frame(log10mean=log10(rmu[idx]),
+                 rratio=rratio[idx],
+                 gene=mcols(sce)$SYMBOL[idx])
+```
+
+```{r high-var-mean-ratio}
+with(df, plot(log10mean, rratio))
+high.uncert <- c(187,188)
+with(df[high.uncert,],
+     points(log10mean, rratio, pch=20, col="red"))
+with(df[high.uncert,],
+     text(log10mean, rratio, gene, pos=4))
+mcols(sce)$SYMBOL[idx][c(668,669)]
+```
+
+Read-through of nearby gene `ENSG00000265681.7` (RPL17):
+
+```{r plot-high-uncert-rd}
+plotInfReps(sce[,1:100], idx="ENSG00000215472.10",
+            x="cluster", mainCol="SYMBOL")
+```
+
+```{r plot-high-uncert-gene}
+plotInfReps(sce[,1:100], idx="ENSG00000265681.7",
+            x="cluster", mainCol="SYMBOL")
+```
+
+## Downstream analysis with Seurat
+
+We now load *Seurat* [@seurat] ...
+
+```{r}
+library(Seurat)
+cts <- assays(sce)[["counts"]]
+pbmc <- CreateSeuratObject(cts)
+```
+
+```{r seurat-violin}
+mt.genes <- rownames(sce)[as.logical(seqnames(sce) == "chrM")]
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, features=mt.genes)
+feats <- c("nFeature_RNA", "nCount_RNA", "percent.mt")
+VlnPlot(pbmc, features=feats, ncol=3)
 ```
 
 ## Links for further reading

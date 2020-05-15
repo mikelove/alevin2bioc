@@ -37,7 +37,7 @@ here ... For this experiment, we used the
 [GENCODE](https://www.gencodegenes.org/) 
 human reference transcripts [@gencode].
 
-## Importing alevin quantification with tximeta
+## Importing alevin data with tximeta
 
 We will use *tximeta* ... [@tximeta].
 
@@ -64,6 +64,13 @@ file.exists(files)
 ```
 ## [1] TRUE
 ```
+
+
+
+We can import the *alevin* quantification using the following call to
+`tximeta`. The extra argument to *alevin* will filter out cells based
+on *alevin*'s post-quantification quality control methods (see paper
+for details).
 
 
 ```r
@@ -115,7 +122,7 @@ experiment data.
 
 
 ```r
-library(SingleCellExperiment)
+suppressPackageStartupMessages(library(SingleCellExperiment))
 sce <- as(se, "SingleCellExperiment")
 ```
 
@@ -229,6 +236,59 @@ table(sce$cluster)
 ##             346             346             189             133              54
 ```
 
+Note that the different clusters have different total counts, for
+example:
+
+
+```r
+cs <- colSums(assays(sce)[["counts"]])
+# cells with higher number of UMI
+more.umi <- cs > 10000
+(tab <- table(more.umi, sce$cluster))
+```
+
+```
+##         
+## more.umi CD4 T CD14+ Monocytes   B CD8 T  NK
+##    FALSE   322             159 165   130  54
+##    TRUE     24             187  24     3   0
+```
+
+```r
+100 * round(prop.table(tab,2),2) # percent
+```
+
+```
+##         
+## more.umi CD4 T CD14+ Monocytes   B CD8 T  NK
+##    FALSE    93              46  87    98 100
+##    TRUE      7              54  13     2   0
+```
+
+```r
+# cell with lower number of UMI
+fewer.umi <- cs < 5000
+(tab <- table(fewer.umi, sce$cluster))
+```
+
+```
+##          
+## fewer.umi CD4 T CD14+ Monocytes   B CD8 T  NK
+##     FALSE   316             300 149   107  39
+##     TRUE     30              46  40    26  15
+```
+
+```r
+100 * round(prop.table(tab,2),2) # percent
+```
+
+```
+##          
+## fewer.umi CD4 T CD14+ Monocytes  B CD8 T NK
+##     FALSE    91              87 79    80 72
+##     TRUE      9              13 21    20 28
+```
+
 
 ```r
 head(top10)
@@ -264,7 +324,6 @@ sce <- sce[,o]
 ```
 
 
-
 ```r
 library(fishpond)
 plotInfReps(sce, idx="ENSG00000167286.9",
@@ -276,7 +335,8 @@ plotInfReps(sce, idx="ENSG00000167286.9",
 
 
 ```r
-plotInfReps(sce[,sample(ncol(sce),200)], idx="ENSG00000167286.9",
+plotInfReps(sce[,sample(ncol(sce),200)],
+            idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
             legend=TRUE)
 ```
@@ -285,7 +345,8 @@ plotInfReps(sce[,sample(ncol(sce),200)], idx="ENSG00000167286.9",
 
 
 ```r
-plotInfReps(sce[,sample(ncol(sce),100)], idx="ENSG00000167286.9",
+plotInfReps(sce[,sample(ncol(sce),100)],
+            idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
             legend=TRUE)
 ```
@@ -296,14 +357,42 @@ plotInfReps(sce[,sample(ncol(sce),100)], idx="ENSG00000167286.9",
 ```r
 plotInfReps(sce, idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
-            legend=TRUE, reorder=FALSE)
+            reorder=FALSE)
 ```
 
 <img src="alevin2bioc_files/figure-html/plot-no-order-1.png" width="480" />
 
 ## Scaling with size factors
 
-## Variance over mean for all cells
+We use `computeSumFactors` [@Lun2016] from the *scran* package
+[@scran] ...
+
+
+```r
+library(scran)
+sce <- computeSumFactors(sce, clusters=sce$cluster)
+plot(cs, sizeFactors(sce), xlab="column sum", ylab="sum factor")
+```
+
+<img src="alevin2bioc_files/figure-html/size-factors-1.png" width="480" />
+
+
+```r
+par(mfrow=c(2,1), mar=c(2.5,4.5,1,1))
+plotInfReps(sce, idx="ENSG00000167286.9",
+            x="cluster", main="",
+            reorder=FALSE)
+plotInfReps(sce, idx="ENSG00000167286.9",
+            x="cluster", main="",
+            applySF=TRUE, reorder=FALSE)
+```
+
+<img src="alevin2bioc_files/figure-html/scaling-1.png" width="480" />
+
+## Inferential variance (uncertainty)
+
+Inferential variance is a focus of the *Swish* nonparametric
+statistical method [@swish] which we do not demonstrate here ...
 
 
 ```r
@@ -318,11 +407,82 @@ df <- data.frame(log10mean=log10(mu[idx]),
 ```r
 library(ggplot2)
 ggplot(df, aes(log10mean, log10var)) +
-  geom_hex(bins=100) +
+  geom_hex(bins=100) + 
   geom_abline(intercept=0, slope=1, col="red")
 ```
 
 <img src="alevin2bioc_files/figure-html/var-mean-1.png" width="480" />
+
+
+```r
+rratio <- rowMeans(assays(sce)[["variance"]] /
+                   (assays(sce)[["mean"]] + 1))
+rmu <- rowMeans(assays(sce)[["mean"]])
+idx <- rmu > 3
+df <- data.frame(log10mean=log10(rmu[idx]),
+                 rratio=rratio[idx],
+                 gene=mcols(sce)$SYMBOL[idx])
+```
+
+
+```r
+with(df, plot(log10mean, rratio))
+high.uncert <- c(187,188)
+with(df[high.uncert,],
+     points(log10mean, rratio, pch=20, col="red"))
+with(df[high.uncert,],
+     text(log10mean, rratio, gene, pos=4))
+```
+
+<img src="alevin2bioc_files/figure-html/high-var-mean-ratio-1.png" width="480" />
+
+```r
+mcols(sce)$SYMBOL[idx][c(668,669)]
+```
+
+```
+## <NA> <NA> 
+##   NA   NA
+```
+
+Read-through of nearby gene `ENSG00000265681.7` (RPL17):
+
+
+```r
+plotInfReps(sce[,1:100], idx="ENSG00000215472.10",
+            x="cluster", mainCol="SYMBOL")
+```
+
+<img src="alevin2bioc_files/figure-html/plot-high-uncert-rd-1.png" width="480" />
+
+
+```r
+plotInfReps(sce[,1:100], idx="ENSG00000265681.7",
+            x="cluster", mainCol="SYMBOL")
+```
+
+<img src="alevin2bioc_files/figure-html/plot-high-uncert-gene-1.png" width="480" />
+
+## Downstream analysis with Seurat
+
+We now load *Seurat* [@seurat] ...
+
+
+```r
+library(Seurat)
+cts <- assays(sce)[["counts"]]
+pbmc <- CreateSeuratObject(cts)
+```
+
+
+```r
+mt.genes <- rownames(sce)[as.logical(seqnames(sce) == "chrM")]
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, features=mt.genes)
+feats <- c("nFeature_RNA", "nCount_RNA", "percent.mt")
+VlnPlot(pbmc, features=feats, ncol=3)
+```
+
+<img src="alevin2bioc_files/figure-html/seurat-violin-1.png" width="480" />
 
 ## Links for further reading
 
