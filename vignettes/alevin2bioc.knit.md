@@ -12,12 +12,15 @@ vignette: >
   %\VignetteEncoding[utf8]{inputenc}
 ---
 
-# Tutorial for importing alevin scRNA-seq quantifications into R/Bioconductor
+# Importing alevin scRNA-seq counts into R/Bioconductor
 
 ## Instructor(s) name(s) and contact information
 
 [Michael Love](https://mikelove.github.io),
 [Avi Srivastava](https://k3yavi.github.io)
+
+
+
 
 ## Introduction
 
@@ -39,13 +42,24 @@ human reference transcripts [@gencode].
 
 ## Importing alevin data with tximeta
 
-We will use *tximeta* ... [@tximeta].
+We will use *tximeta* to import the *alevin* counts into
+R/Bioconductor. The main function `tximeta` reads information from the
+entire output directory of *alevin* or *Salmon* in order to
+automatically detect and download metadata about the reference
+sequences (the transcripts) [@tximeta]. It should work "out of the
+box" for human, mouse, and fruit fly reference transcripts from
+GENCODE, Ensembl, or RefSeq
 
 First we specify the path where the quantification data is stored. In
 this tutorial, the data is stored in an R package, so we need to use
-the `system.file` command. For typical use, you would not use
-`system.file`, but would just specify the path to the directory of the
-output from *alevin*. 
+the `system.file` command. 
+
+**Note:** For typical use, you would not use `system.file`, but would
+just specify the path to the directory of the output from *alevin*.
+
+**Second note:** when sharing *alevin* or *Salmon* datasets, make sure
+to share the entire output directory (you can `zip` or `tar` the
+directories to make them into a single share-able file).
 
 
 ```r
@@ -54,6 +68,10 @@ output from *alevin*.
 extdata <- system.file("extdata", package="alevin2bioc")
 dir <- file.path(extdata, "pbmc_1k")
 ```
+
+We make a vector called `files` (for *alevin* this will point to just
+a single file, but with *Salmon* usually one would import multiple
+files at a time).
 
 
 ```r
@@ -115,6 +133,14 @@ se <- tximeta(files, type="alevin", alevinArgs=list(filterBarcodes=TRUE))
 ## fetching genome info for GENCODE
 ```
 
+We can see as it was importing that it automatically detected we are
+working with data quantified using GENCODE's *Homo sapiens* reference
+transcripts, release 33. The transcript metadata was added
+programmatically to the output (this object, `se`). `tximeta` is also
+written in such a way that it will avoid unnecessary downloads and
+parsing of files -- it will first attempt to find a cached version of
+the metadata, to avoid re-downloading or re-parsing these files.
+
 `tximeta` returns a *SummarizedExperiment* [@Lawrence2013]. We can
 easily convert this object into a *SingleCellExperiment*
 [@Amezquita2020] which has specific slots designed for single-cell
@@ -126,6 +152,14 @@ suppressPackageStartupMessages(library(SingleCellExperiment))
 sce <- as(se, "SingleCellExperiment")
 ```
 
+The *SingleCellExperiment* object is used widely across Bioconductor
+packages (as you may already know), and so the code up to this point
+can be used as an entry point into other Bioconductor single cell
+workflows. For more details on working with *SingleCellExperiment*
+objects, one can consult the following online book: 
+[Orchestrating Single-Cell Analysis with Bioconductor](https://osca.bioconductor.org/)
+[@Amezquita2020].
+
 ## Benefits of tximeta
 
 We can automatically add IDs, because *tximeta* knows the type of
@@ -134,6 +168,13 @@ identifiers on the rows of the `sce` object:
 
 ```r
 library(org.Hs.eg.db)
+```
+
+```
+## 
+```
+
+```r
 sce <- addIds(sce, "SYMBOL")
 ```
 
@@ -199,14 +240,18 @@ sce[sce %over% x,]
 
 ## Add cell annotations
 
-Cell annotations were generated using *Seurat* [@seurat]. The script is
-saved in this package in `inst/scripts/seurat.R`.
+Cell annotations were already generated using *Seurat* [@seurat]. The
+script is saved in this package in `inst/scripts/seurat.R`. Here we
+will use them for size factor estimation and for visualization.
 
 
 ```r
 ids <- readRDS(file.path(extdata, "idents.rds"))
 top10 <- read.csv(file.path(extdata, "top10.csv"))
 ```
+
+We subset to the cells that we have IDs for, and attach the labels in
+the correct order:
 
 
 ```r
@@ -224,6 +269,8 @@ table(idx)
 sce <- sce[,idx]
 sce$cluster <- ids[colnames(sce)]
 ```
+
+The number of cells per cluster:
 
 
 ```r
@@ -289,6 +336,9 @@ fewer.umi <- cs < 5000
 ##     TRUE      9              13 21    20 28
 ```
 
+We have a data.frame with the top marker genes per cluster, as
+identified with *Seurat*.
+
 
 ```r
 head(top10)
@@ -313,6 +363,18 @@ head(top10)
 
 ## Plotting counts with uncertainty
 
+In this section, we will begin to plot the counts for cells, for
+specific genes, and showing the "inferential uncertainty" as
+quantified by *alevin*. This is a unique aspect to the *alevin*
+quantification method, that it retains gene multi-mapping reads
+(instead of discarding them), and also can attach a degree of
+uncertainty to each count in the matrix. *alevin* computes the mean
+and variance of inferential replicates, and `tximeta` will also import
+these matrices by default (they are also sparse, similar to the counts
+matrix). We will first visualize the uncertainty, and later give an
+example of a set of genes where the uncertainty gives us useful
+information. 
+
 For a later demonstration of scaling, we will sort the cells by the
 total count (this is not something you would necessarily do in a
 typical analysis).
@@ -322,6 +384,10 @@ typical analysis).
 o <- order(colSums(assays(sce)[["counts"]]), decreasing=TRUE)
 sce <- sce[,o]
 ```
+
+We can now use a simple function from the *fishpond* package in order
+to plot the inferential mean and variance for the cells, for various
+genes.
 
 
 ```r
@@ -333,9 +399,12 @@ plotInfReps(sce, idx="ENSG00000167286.9",
 
 <img src="alevin2bioc_files/figure-html/plot-basic-1.png" width="480" />
 
+Here we show the same plot but now subsetting the number of cells: 
+
 
 ```r
-plotInfReps(sce[,sample(ncol(sce),200)],
+idx <- sample(ncol(sce),200)
+plotInfReps(sce[,idx],
             idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
             legend=TRUE)
@@ -343,15 +412,24 @@ plotInfReps(sce[,sample(ncol(sce),200)],
 
 <img src="alevin2bioc_files/figure-html/plot-medium-1.png" width="480" />
 
+This time only 100 cells:
+
 
 ```r
-plotInfReps(sce[,sample(ncol(sce),100)],
+idx <- sample(ncol(sce),100)
+plotInfReps(sce[,idx],
             idx="ENSG00000167286.9",
             x="cluster", mainCol="SYMBOL",
             legend=TRUE)
 ```
 
 <img src="alevin2bioc_files/figure-html/plot-small-1.png" width="480" />
+
+The plots change their features across different sample sizes for ease
+of viewing the uncertainty of quantification for individual cells.
+
+We can also choose to plot the cells in their original order (the
+default for scRNA-seq is to sort by the mean value):
 
 
 ```r
@@ -365,7 +443,8 @@ plotInfReps(sce, idx="ENSG00000167286.9",
 ## Scaling with size factors
 
 We use `computeSumFactors` [@Lun2016] from the *scran* package
-[@scran] ...
+[@scran] to compute size factors that are stored in
+`sizeFactors(sce)`. 
 
 
 ```r
@@ -375,6 +454,10 @@ plot(cs, sizeFactors(sce), xlab="column sum", ylab="sum factor")
 ```
 
 <img src="alevin2bioc_files/figure-html/size-factors-1.png" width="480" />
+
+Now we demonstrate un-scaled counts and counts scaling with size 
+factors just computed. (Note in the second plot that the first cell in
+each group isn't the highest anymore.)
 
 
 ```r
@@ -391,8 +474,23 @@ plotInfReps(sce, idx="ENSG00000167286.9",
 
 ## Inferential variance (uncertainty)
 
-Inferential variance is a focus of the *Swish* nonparametric
-statistical method [@swish] which we do not demonstrate here ...
+In this second to last section, we will briefly talk about how the
+inferential uncertainty as stored in the variance assay may be useful
+in practice.
+
+Many users may prefer to just work with the counts matrix, and not
+consider the inferential mean and variance. We have found that,
+globally, this may not lead to too much of a problem, but for certain
+genes, it may be important to use the inferential variance in cases
+where it may signal difficult to quantify genes. Inferential
+uncertainty for bulk and single cell RNA-seq differential expression
+was a focus of the *Swish* nonparametric statistical method [@swish]
+which we do not demonstrate here, but one can refer to
+the vignette of [swish](https://bioconductor.org/packages/swish) for
+more details (in particular the section on *alevin* data).
+
+Let's start by visualizing the uncertainty across all values in the
+matrix: 
 
 
 ```r
@@ -413,66 +511,108 @@ ggplot(df, aes(log10mean, log10var)) +
 
 <img src="alevin2bioc_files/figure-html/var-mean-1.png" width="480" />
 
+The values around the red line indicate not much uncertainty
+(bootstrapping reads gives us roughly multinomial, and so also
+approximately Poisson, variability around the mean count). However we
+can see a tail of higher uncertainty values in the matrix, where the
+inferential variance is for example, up to 10 times higher than the
+mean. 
+
+We can also plot this summarized to a single value per gene, here we
+calculate the 99% quantile of the ratio of variance over mean, per
+gene, and plot this over the mean:
+
 
 ```r
-rratio <- rowMeans(assays(sce)[["variance"]] /
-                   (assays(sce)[["mean"]] + 1))
+library(matrixStats)
+rratio <- rowQuantiles(as.matrix(
+  assays(sce)[["variance"]] /
+  (assays(sce)[["mean"]] + 1)), probs=.99)
 rmu <- rowMeans(assays(sce)[["mean"]])
-idx <- rmu > 3
+idx <- rmu > .1
 df <- data.frame(log10mean=log10(rmu[idx]),
                  rratio=rratio[idx],
                  gene=mcols(sce)$SYMBOL[idx])
 ```
 
+A number of genes have a ratio above 2, but then two genes in this
+dataset stand out above the rest, and they happen to be a ribosomal
+gene, and another gene that is a read-through of the same locus:
+
 
 ```r
 with(df, plot(log10mean, rratio))
-high.uncert <- c(187,188)
+high.uncert <- which(df$rratio > 10)
 with(df[high.uncert,],
      points(log10mean, rratio, pch=20, col="red"))
 with(df[high.uncert,],
-     text(log10mean, rratio, gene, pos=4))
+     text(log10mean, rratio, gene, pos=c(2,4)))
 ```
 
 <img src="alevin2bioc_files/figure-html/high-var-mean-ratio-1.png" width="480" />
 
 ```r
-mcols(sce)$SYMBOL[idx][c(668,669)]
+mcols(sce)$SYMBOL[idx][high.uncert]
 ```
 
 ```
-## <NA> <NA> 
-##   NA   NA
+##  ENSG00000215472  ENSG00000265681 
+## "RPL17-C18orf32"          "RPL17"
 ```
 
-Read-through of nearby gene `ENSG00000265681.7` (RPL17):
+Some of the counts for the ribosomal gene and its read-through:
 
 
 ```r
+par(mfrow=c(2,1), mar=c(2.5,4.5,1,1))
+plotInfReps(sce[,1:100], idx="ENSG00000265681.7",
+            x="cluster", mainCol="SYMBOL")
 plotInfReps(sce[,1:100], idx="ENSG00000215472.10",
             x="cluster", mainCol="SYMBOL")
 ```
 
-<img src="alevin2bioc_files/figure-html/plot-high-uncert-rd-1.png" width="480" />
+<img src="alevin2bioc_files/figure-html/plot-high-uncert-1.png" width="480" />
 
-
-```r
-plotInfReps(sce[,1:100], idx="ENSG00000265681.7",
-            x="cluster", mainCol="SYMBOL")
-```
-
-<img src="alevin2bioc_files/figure-html/plot-high-uncert-gene-1.png" width="480" />
+The extra uncertainty on the counts for this gene indicate that
+*alevin* was not certain if the reads should come from the gene or its
+read-through. While in this case, the ribosomal gene may not be over
+interest, there are other cases (e.g. developmental or immune genes
+with high sequence homology) where information of the uncertainty of
+quantification can be useful in interpreting the data.
 
 ## Downstream analysis with Seurat
 
-We now load *Seurat* [@seurat] ...
+As we previously showed how to construct a *SingleCellExperiment*
+which can be used with other Bioconductor workflows, we also
+demonstrate how it is easy to convert the `sce` object into an object
+for use with the *Seurat* R package [@seurat] for single cell
+analysis. As we noted, *Seurat* was already used to identify the cell
+types (with the script stored in `inst/scripts/seurat.R`).
+
+We now load *Seurat* and create a *Seurat* object:
 
 
 ```r
 library(Seurat)
+```
+
+```
+## 
+## Attaching package: 'Seurat'
+```
+
+```
+## The following object is masked from 'package:SummarizedExperiment':
+## 
+##     Assays
+```
+
+```r
 cts <- assays(sce)[["counts"]]
 pbmc <- CreateSeuratObject(cts)
 ```
+
+We can easily create violin plots, for example:
 
 
 ```r
@@ -484,6 +624,9 @@ VlnPlot(pbmc, features=feats, ncol=3)
 
 <img src="alevin2bioc_files/figure-html/seurat-violin-1.png" width="480" />
 
-## Links for further reading
+From this point, one can use the `pbmc` object for use in *Seurat*
+workflows, for example,
+the [vignettes](https://satijalab.org/seurat/vignettes.html) on the
+*Seurat* website. 
 
 ## References
