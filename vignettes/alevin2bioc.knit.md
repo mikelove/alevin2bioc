@@ -24,19 +24,37 @@ vignette: >
 
 ## Introduction
 
-*alevin* is a method for ... [@alevin]. It extends the methods in the
-*Salmon* software [@salmon].
+*alevin* is a fast end-to-end pipeline to process droplet-based
+single-cell RNA sequencing (dscRNA-seq) data, generating per-cell gene
+count estimates by performing cell barcode detection, read mapping,
+and unique molecular identifier (UMI) deduplication.[@alevin]. It
+extends the methods in the *Salmon* software [@salmon], and is
+distributed as part of *Salmon*.
 
-The data we will use is ... (citation).
+The data we will use today is generated from the peripheral blood
+mononuclear cells (PBMCs) of a healthy donor which have been sequenced
+and made public by 10x Genomics (referred as PBMC_1k V2 Chemistry)
+[@pbmc]. These cells are well characterized, and so we will examine
+counts for cells grouped into cell types labelled by marker genes.
 
 ## Running alevin
 
-In order to run *alevin*, we must first ...
+In order to run *alevin*, we must first generate some metadata. We
+will link out to code for the steps for running *alevin*, and focus on
+importing data using R code chunks below. The output of running
+*alevin* on the PBMC sequence data is included in this workflow
+package in the `extdata` directory. *alevin* took about 14 minutes to
+quantify 33 million reads from around 1700 cells. 30 bootstrap
+inferential replicates were generated, summarized to sparse
+inferential mean and variance matrices (discussed later).
 
-Instructions on downloading *alevin* can be found here ...
+The step-by-step guidelines to process the reference sequence and
+generate the required data can be found
+[here](https://combine-lab.github.io/alevin-tutorial/2018/setting-up-resources/).
 
 Instructions on indexing a set of reference transcripts can be found
-here ... For this experiment, we used the 
+[here](https://combine-lab.github.io/alevin-tutorial/2019/selective-alignment/). 
+For this experiment, we used the 
 [GENCODE](https://www.gencodegenes.org/) 
 human reference transcripts [@gencode].
 
@@ -160,21 +178,74 @@ objects, one can consult the following online book:
 [Orchestrating Single-Cell Analysis with Bioconductor](https://osca.bioconductor.org/)
 [@Amezquita2020].
 
+The data is now available as assays in `sce`. We can see what is
+available:
+
+
+```r
+assayNames(sce)
+```
+
+```
+## [1] "counts"   "variance" "mean"
+```
+
+And we can access individual gene-by-cell data by pulling out a
+particular assay. Note that, due to the use of EM (which avoids
+discarding multi-mapping reads), we will have some fractional counts
+in the counts matrix.
+
+
+```r
+assays(sce)[["counts"]][1:20,1:4]
+```
+
+```
+## 20 x 4 sparse Matrix of class "dgCMatrix"
+##                   AAGACAACAGATCACT CAGGTATGTCAGTCTA TATCTTGTCCATCTCG TTGTTCACACTTGTGA
+## ENSG00000223972.5                .                .                .                .
+## ENSG00000227232.5                .                .                .                .
+## ENSG00000278267.1                .                .                .                .
+## ENSG00000243485.5                .                .                .                .
+## ENSG00000284332.1                .                .                .                .
+## ENSG00000237613.2                .                .                .                .
+## ENSG00000268020.3                .                .                .                .
+## ENSG00000240361.2                .                .                .                .
+## ENSG00000186092.6                .                .                .                .
+## ENSG00000238009.6                .                .                .                .
+## ENSG00000239945.1                .                .                .                .
+## ENSG00000233750.3                .                .                .                .
+## ENSG00000268903.1                .                .                .                .
+## ENSG00000269981.1                .                .                .                .
+## ENSG00000239906.1                .                .                .                .
+## ENSG00000241860.7                1                .                .                .
+## ENSG00000222623.1                .                .                .                .
+## ENSG00000241599.1                .                .                .                .
+## ENSG00000279928.2                .                .                .                .
+## ENSG00000279457.4                .                .                .                .
+```
+
+For the `counts` matrix, we can also use the `counts()` accessor
+function: 
+
+
+```r
+colSums(counts(sce)[,1:4])
+```
+
+```
+## AAGACAACAGATCACT CAGGTATGTCAGTCTA TATCTTGTCCATCTCG TTGTTCACACTTGTGA 
+##            19030            24657            29921            25864
+```
+
 ## Benefits of tximeta
 
-We can automatically add IDs, because *tximeta* knows the type of
+We can automatically add gene IDs, because *tximeta* knows the type of 
 identifiers on the rows of the `sce` object:
 
 
 ```r
-library(org.Hs.eg.db)
-```
-
-```
-## 
-```
-
-```r
+library(org.Hs.eg.db) # org pkg for Homo sapiens
 sce <- addIds(sce, "SYMBOL")
 ```
 
@@ -367,12 +438,19 @@ In this section, we will begin to plot the counts for cells, for
 specific genes, and showing the *inferential uncertainty* as
 quantified by *alevin*. This is a unique aspect to the *alevin*
 quantification method, that it retains gene multi-mapping reads,
-instead of discarding these reads. *alevin* can also attach a measure
-of uncertainty to each count in the matrix. *alevin* computes the mean
-and variance of *inferential replicates* which are generated by
-bootstrapping the read data. `tximeta` will import these inferential
-mean and variance matrices by default (they are also sparse, similar
-to the counts matrix).
+instead of discarding these reads. Note that many reads can be
+discarded with alternative pipelines, and these are not uniformly lost
+from all genes, but the number of multi-mapping reads is higher for
+gene families (i.e. genes with high sequence homology). See the
+*alevin* publication for more details on this aspect of bias in
+dscRNA-seq counts [@alevin].
+
+*alevin* can also attach a measure of uncertainty to each count in the
+matrix. *alevin* computes the mean and variance of *inferential
+replicates* which are generated by bootstrapping the read
+data. `tximeta` will import these inferential mean and variance
+matrices by default (they are also sparse, similar to the counts
+matrix).
 
 We will first visualize the uncertainty, and later give an
 example of a set of genes where the uncertainty is indicating
@@ -413,6 +491,7 @@ Here we show the same plot but now subsetting the number of cells:
 
 
 ```r
+set.seed(1)
 idx <- sample(ncol(sce),200)
 plotInfReps(sce[,idx],
             idx="ENSG00000167286.9",
@@ -604,20 +683,6 @@ We now load *Seurat* and create a *Seurat* object:
 
 ```r
 library(Seurat)
-```
-
-```
-## 
-## Attaching package: 'Seurat'
-```
-
-```
-## The following object is masked from 'package:SummarizedExperiment':
-## 
-##     Assays
-```
-
-```r
 cts <- assays(sce)[["counts"]]
 pbmc <- CreateSeuratObject(cts)
 ```
@@ -638,5 +703,113 @@ From this point, one can use the `pbmc` object for use in *Seurat*
 workflows, for example,
 the [vignettes](https://satijalab.org/seurat/vignettes.html) on the
 *Seurat* website. 
+
+## Support
+
+For support on this tutorial, feel free to post
+to <https://support.bioconductor.org> and tag the post with the
+appropriate package (e.g. `tximeta` if the question is particular to
+the `tximeta` import aspect). If you are asking about a particular
+function, don't forget to first read the man page (e.g. `?tximeta`),
+and also check the relevant package vignette for relevant details
+(e.g. [tximeta vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximeta/inst/doc/tximeta.html)).
+
+For questions about *alevin*, first consult the online documentation
+at these links
+
+<https://combine-lab.github.io/alevin-tutorial/>
+
+<https://salmon.readthedocs.io/en/latest/alevin.html>
+
+You can also find links for seeking further support here:
+
+<https://github.com/COMBINE-lab/salmon>
+
+## Session info
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Catalina 10.15.4
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats4    parallel  stats     graphics  grDevices datasets  utils     methods   base     
+## 
+## other attached packages:
+##  [1] Seurat_3.1.5                ggplot2_3.3.0               scran_1.17.0               
+##  [4] fishpond_1.5.21             org.Hs.eg.db_3.11.1         SingleCellExperiment_1.11.1
+##  [7] SummarizedExperiment_1.19.2 DelayedArray_0.15.1         matrixStats_0.56.0         
+## [10] tximeta_1.7.3               GenomicFeatures_1.41.0      AnnotationDbi_1.51.0       
+## [13] Biobase_2.49.0              GenomicRanges_1.41.1        GenomeInfoDb_1.25.0        
+## [16] IRanges_2.23.4              S4Vectors_0.27.5            BiocGenerics_0.35.2        
+## [19] testthat_2.3.2              rmarkdown_2.1               devtools_2.3.0             
+## [22] usethis_1.6.1              
+## 
+## loaded via a namespace (and not attached):
+##   [1] reticulate_1.15               tidyselect_1.0.0              RSQLite_2.2.0                
+##   [4] htmlwidgets_1.5.1             grid_4.0.0                    BiocParallel_1.23.0          
+##   [7] Rtsne_0.15                    munsell_0.5.0                 codetools_0.2-16             
+##  [10] ica_1.0-2                     statmod_1.4.34                future_1.17.0                
+##  [13] withr_2.2.0                   colorspace_1.4-1              knitr_1.28                   
+##  [16] ROCR_1.0-11                   listenv_0.8.0                 labeling_0.3                 
+##  [19] tximport_1.17.0               GenomeInfoDbData_1.2.3        farver_2.0.3                 
+##  [22] bit64_0.9-7                   rprojroot_1.3-2               vctrs_0.2.4                  
+##  [25] xfun_0.13                     BiocFileCache_1.13.0          R6_2.4.1                     
+##  [28] ggbeeswarm_0.6.0              rsvd_1.0.3                    locfit_1.5-9.4               
+##  [31] AnnotationFilter_1.13.0       bitops_1.0-6                  assertthat_0.2.1             
+##  [34] promises_1.1.0                scales_1.1.1                  beeswarm_0.2.3               
+##  [37] gtable_0.3.0                  npsurv_0.4-0.1                globals_0.12.5               
+##  [40] processx_3.4.2                ensembldb_2.13.1              rlang_0.4.6                  
+##  [43] splines_4.0.0                 rtracklayer_1.49.1            lazyeval_0.2.2               
+##  [46] hexbin_1.28.1                 reshape2_1.4.4                BiocManager_1.30.10          
+##  [49] yaml_2.2.1                    backports_1.1.6               httpuv_1.5.2                 
+##  [52] tools_4.0.0                   ellipsis_0.3.0                RColorBrewer_1.1-2           
+##  [55] sessioninfo_1.1.1             ggridges_0.5.2                Rcpp_1.0.4.6                 
+##  [58] plyr_1.8.6                    progress_1.2.2                zlibbioc_1.35.0              
+##  [61] purrr_0.3.4                   RCurl_1.98-1.2                ps_1.3.3                     
+##  [64] prettyunits_1.1.1             openssl_1.4.1                 pbapply_1.4-2                
+##  [67] viridis_0.5.1                 cowplot_1.0.0                 zoo_1.8-8                    
+##  [70] ggrepel_0.8.2                 cluster_2.1.0                 fs_1.4.1                     
+##  [73] magrittr_1.5                  data.table_1.12.8             lmtest_0.9-37                
+##  [76] RANN_2.6.1                    ProtGenerics_1.21.0           fitdistrplus_1.0-14          
+##  [79] pkgload_1.0.2                 hms_0.5.3                     patchwork_1.0.0              
+##  [82] lsei_1.2-0.1                  mime_0.9                      evaluate_0.14                
+##  [85] xtable_1.8-4                  XML_3.99-0.3                  gridExtra_2.3                
+##  [88] compiler_4.0.0                biomaRt_2.45.0                scater_1.17.0                
+##  [91] tibble_3.0.1                  KernSmooth_2.23-17            crayon_1.3.4                 
+##  [94] htmltools_0.4.0               later_1.0.0                   tidyr_1.0.3                  
+##  [97] DBI_1.1.0                     dbplyr_1.4.3                  MASS_7.3-51.6                
+## [100] rappdirs_0.3.1                Matrix_1.2-18                 cli_2.0.2                    
+## [103] igraph_1.2.5                  pkgconfig_2.0.3               GenomicAlignments_1.25.0     
+## [106] plotly_4.9.2.1                vipor_0.4.5                   dqrng_0.2.1                  
+## [109] XVector_0.29.0                stringr_1.4.0                 callr_3.4.3                  
+## [112] digest_0.6.25                 tsne_0.1-3                    sctransform_0.2.1            
+## [115] RcppAnnoy_0.0.16              Biostrings_2.57.0             leiden_0.3.3                 
+## [118] uwot_0.1.8                    edgeR_3.31.0                  DelayedMatrixStats_1.11.0    
+## [121] curl_4.3                      shiny_1.4.0.2                 Rsamtools_2.5.0              
+## [124] gtools_3.8.2                  lifecycle_0.2.0               nlme_3.1-147                 
+## [127] jsonlite_1.6.1                BiocNeighbors_1.7.0           desc_1.2.0                   
+## [130] viridisLite_0.3.0             askpass_1.1                   limma_3.45.0                 
+## [133] fansi_0.4.1                   pillar_1.4.4                  lattice_0.20-41              
+## [136] fastmap_1.0.1                 httr_1.4.1                    pkgbuild_1.0.8               
+## [139] survival_3.1-12               interactiveDisplayBase_1.27.0 glue_1.4.0                   
+## [142] remotes_2.1.1                 png_0.1-7                     BiocVersion_3.12.0           
+## [145] bit_1.1-15.2                  stringi_1.4.6                 blob_1.2.1                   
+## [148] BiocSingular_1.5.0            AnnotationHub_2.21.0          memoise_1.1.0                
+## [151] dplyr_0.8.5                   irlba_2.3.3                   future.apply_1.5.0           
+## [154] ape_5.3
+```
 
 ## References
