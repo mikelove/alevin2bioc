@@ -313,5 +313,104 @@ more details (in particular the section on *alevin* data).
 Let's start by visualizing the uncertainty across all values in the
 matrix: 
 
+```{r}
+var <- as.vector(assays(sce)[["variance"]])
+mu <- as.vector(assays(sce)[["mean"]])
+idx <- mu > 3
+df <- data.frame(log10mean=log10(mu[idx]),
+                 log10var=log10(var[idx]))
+```
+
+```{r var-mean, fig.height=4}
+library(ggplot2)
+ggplot(df, aes(log10mean, log10var)) +
+  geom_hex(bins=100) + 
+  geom_abline(intercept=0, slope=1, col="red")
+```
+
+The values around the red line indicate not much uncertainty
+(bootstrapping reads gives us roughly multinomial, and so also
+approximately Poisson, variability around the mean count). However we
+can see a tail of higher uncertainty values in the matrix, where the
+inferential variance is for example, up to 10 times higher than the
+mean. 
+
+We can also plot this summarized to a single value per gene, here we
+calculate the 99% quantile of the ratio of variance over mean, per
+gene, and plot this over the mean:
+
+```{r}
+library(matrixStats)
+rratio <- rowQuantiles(as.matrix(
+  assays(sce)[["variance"]] /
+  (assays(sce)[["mean"]] + 1)), probs=.99)
+rmu <- rowMeans(assays(sce)[["mean"]])
+idx <- rmu > .1
+df <- data.frame(log10mean=log10(rmu[idx]),
+                 rratio=rratio[idx],
+                 gene=mcols(sce)$SYMBOL[idx])
+```
+
+A number of genes have a ratio above 2, but then two genes in this
+dataset stand out above the rest, and they happen to be a ribosomal
+gene, and another gene that is a read-through of the same locus:
+
+```{r high-var-mean-ratio}
+with(df, plot(log10mean, rratio))
+high.uncert <- which(df$rratio > 10)
+with(df[high.uncert,],
+     points(log10mean, rratio, pch=20, col="red"))
+with(df[high.uncert,],
+     text(log10mean, rratio, gene, pos=c(2,4)))
+mcols(sce)$SYMBOL[idx][high.uncert]
+```
+
+Some of the counts for the ribosomal gene and its read-through:
+
+```{r plot-high-uncert}
+par(mfrow=c(2,1), mar=c(2.5,4.5,1,1))
+plotInfReps(sce[,1:100], idx="ENSG00000265681.7",
+            x="cluster", mainCol="SYMBOL")
+plotInfReps(sce[,1:100], idx="ENSG00000215472.10",
+            x="cluster", mainCol="SYMBOL")
+```
+
+The extra uncertainty on the counts for this gene indicate that
+*alevin* was not certain if the reads should come from the gene or its
+read-through. While in this case, the ribosomal gene may not be over
+interest, there are other cases (e.g. developmental or immune genes
+with high sequence homology) where information of the uncertainty of
+quantification can be useful in interpreting the data.
+
+## Downstream analysis with Seurat
+
+As we previously showed how to construct a *SingleCellExperiment*
+which can be used with other Bioconductor workflows, we also
+demonstrate how it is easy to convert the `sce` object into an object
+for use with the *Seurat* R package [@seurat] for single cell
+analysis. As we noted, *Seurat* was already used to identify the cell
+types (with the script stored in `inst/scripts/seurat.R`).
+
+We now load *Seurat* and create a *Seurat* object:
+
+```{r}
+library(Seurat)
+cts <- assays(sce)[["counts"]]
+pbmc <- CreateSeuratObject(cts)
+```
+
+We can easily create violin plots, for example:
+
+```{r seurat-violin}
+mt.genes <- rownames(sce)[as.logical(seqnames(sce) == "chrM")]
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, features=mt.genes)
+feats <- c("nFeature_RNA", "nCount_RNA", "percent.mt")
+VlnPlot(pbmc, features=feats, ncol=3)
+```
+
+From this point, one can use the `pbmc` object for use in *Seurat*
+workflows, for example,
+the [vignettes](https://satijalab.org/seurat/vignettes.html) on the
+*Seurat* website. 
 
 ## References
