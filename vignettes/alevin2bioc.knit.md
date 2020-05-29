@@ -60,6 +60,8 @@ human reference transcripts [@gencode].
 
 ## Importing alevin data with tximeta
 
+
+
 We will use *tximeta* to import the *alevin* counts into
 R/Bioconductor. The main function `tximeta` reads information from the
 entire output directory of *alevin* or *Salmon* in order to
@@ -754,62 +756,60 @@ sessionInfo()
 ## [10] tximeta_1.7.3               GenomicFeatures_1.41.0      AnnotationDbi_1.51.0       
 ## [13] Biobase_2.49.0              GenomicRanges_1.41.1        GenomeInfoDb_1.25.0        
 ## [16] IRanges_2.23.4              S4Vectors_0.27.5            BiocGenerics_0.35.2        
-## [19] testthat_2.3.2              rmarkdown_2.1               devtools_2.3.0             
-## [22] usethis_1.6.1              
+## [19] BiocFileCache_1.13.0        dbplyr_1.4.3                testthat_2.3.2             
+## [22] rmarkdown_2.1               devtools_2.3.0              usethis_1.6.1              
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] reticulate_1.15               tidyselect_1.0.0              RSQLite_2.2.0                
-##   [4] htmlwidgets_1.5.1             grid_4.0.0                    BiocParallel_1.23.0          
-##   [7] Rtsne_0.15                    munsell_0.5.0                 codetools_0.2-16             
-##  [10] ica_1.0-2                     statmod_1.4.34                future_1.17.0                
-##  [13] withr_2.2.0                   colorspace_1.4-1              knitr_1.28                   
-##  [16] ROCR_1.0-11                   listenv_0.8.0                 labeling_0.3                 
-##  [19] tximport_1.17.0               GenomeInfoDbData_1.2.3        farver_2.0.3                 
-##  [22] bit64_0.9-7                   rprojroot_1.3-2               vctrs_0.2.4                  
-##  [25] xfun_0.13                     BiocFileCache_1.13.0          R6_2.4.1                     
-##  [28] ggbeeswarm_0.6.0              rsvd_1.0.3                    locfit_1.5-9.4               
-##  [31] AnnotationFilter_1.13.0       bitops_1.0-6                  assertthat_0.2.1             
-##  [34] promises_1.1.0                scales_1.1.1                  beeswarm_0.2.3               
-##  [37] gtable_0.3.0                  npsurv_0.4-0.1                globals_0.12.5               
-##  [40] processx_3.4.2                ensembldb_2.13.1              rlang_0.4.6                  
-##  [43] splines_4.0.0                 rtracklayer_1.49.1            lazyeval_0.2.2               
-##  [46] hexbin_1.28.1                 reshape2_1.4.4                BiocManager_1.30.10          
-##  [49] yaml_2.2.1                    backports_1.1.6               httpuv_1.5.2                 
-##  [52] tools_4.0.0                   ellipsis_0.3.0                RColorBrewer_1.1-2           
-##  [55] sessioninfo_1.1.1             ggridges_0.5.2                Rcpp_1.0.4.6                 
-##  [58] plyr_1.8.6                    progress_1.2.2                zlibbioc_1.35.0              
-##  [61] purrr_0.3.4                   RCurl_1.98-1.2                ps_1.3.3                     
-##  [64] prettyunits_1.1.1             openssl_1.4.1                 pbapply_1.4-2                
-##  [67] viridis_0.5.1                 cowplot_1.0.0                 zoo_1.8-8                    
-##  [70] ggrepel_0.8.2                 cluster_2.1.0                 fs_1.4.1                     
-##  [73] magrittr_1.5                  data.table_1.12.8             lmtest_0.9-37                
-##  [76] RANN_2.6.1                    ProtGenerics_1.21.0           fitdistrplus_1.0-14          
-##  [79] pkgload_1.0.2                 hms_0.5.3                     patchwork_1.0.0              
-##  [82] lsei_1.2-0.1                  mime_0.9                      evaluate_0.14                
-##  [85] xtable_1.8-4                  XML_3.99-0.3                  gridExtra_2.3                
-##  [88] compiler_4.0.0                biomaRt_2.45.0                scater_1.17.0                
-##  [91] tibble_3.0.1                  KernSmooth_2.23-17            crayon_1.3.4                 
-##  [94] htmltools_0.4.0               later_1.0.0                   tidyr_1.0.3                  
-##  [97] DBI_1.1.0                     dbplyr_1.4.3                  MASS_7.3-51.6                
-## [100] rappdirs_0.3.1                Matrix_1.2-18                 cli_2.0.2                    
-## [103] igraph_1.2.5                  pkgconfig_2.0.3               GenomicAlignments_1.25.0     
-## [106] plotly_4.9.2.1                vipor_0.4.5                   dqrng_0.2.1                  
-## [109] XVector_0.29.0                stringr_1.4.0                 callr_3.4.3                  
-## [112] digest_0.6.25                 tsne_0.1-3                    sctransform_0.2.1            
-## [115] RcppAnnoy_0.0.16              Biostrings_2.57.0             leiden_0.3.3                 
-## [118] uwot_0.1.8                    edgeR_3.31.0                  DelayedMatrixStats_1.11.0    
-## [121] curl_4.3                      shiny_1.4.0.2                 Rsamtools_2.5.0              
-## [124] gtools_3.8.2                  lifecycle_0.2.0               nlme_3.1-147                 
-## [127] jsonlite_1.6.1                BiocNeighbors_1.7.0           desc_1.2.0                   
-## [130] viridisLite_0.3.0             askpass_1.1                   limma_3.45.0                 
-## [133] fansi_0.4.1                   pillar_1.4.4                  lattice_0.20-41              
-## [136] fastmap_1.0.1                 httr_1.4.1                    pkgbuild_1.0.8               
-## [139] survival_3.1-12               interactiveDisplayBase_1.27.0 glue_1.4.0                   
-## [142] remotes_2.1.1                 png_0.1-7                     BiocVersion_3.12.0           
-## [145] bit_1.1-15.2                  stringi_1.4.6                 blob_1.2.1                   
-## [148] BiocSingular_1.5.0            AnnotationHub_2.21.0          memoise_1.1.0                
-## [151] dplyr_0.8.5                   irlba_2.3.3                   future.apply_1.5.0           
-## [154] ape_5.3
+##   [1] utf8_1.1.4                    reticulate_1.15               tidyselect_1.0.0             
+##   [4] RSQLite_2.2.0                 htmlwidgets_1.5.1             grid_4.0.0                   
+##   [7] BiocParallel_1.23.0           Rtsne_0.15                    munsell_0.5.0                
+##  [10] codetools_0.2-16              ica_1.0-2                     statmod_1.4.34               
+##  [13] future_1.17.0                 withr_2.2.0                   colorspace_1.4-1             
+##  [16] knitr_1.28                    ROCR_1.0-11                   listenv_0.8.0                
+##  [19] tximport_1.17.0               GenomeInfoDbData_1.2.3        bit64_0.9-7                  
+##  [22] rprojroot_1.3-2               vctrs_0.2.4                   xfun_0.13                    
+##  [25] R6_2.4.1                      ggbeeswarm_0.6.0              rsvd_1.0.3                   
+##  [28] locfit_1.5-9.4                AnnotationFilter_1.13.0       bitops_1.0-6                 
+##  [31] assertthat_0.2.1              promises_1.1.0                scales_1.1.1                 
+##  [34] beeswarm_0.2.3                gtable_0.3.0                  npsurv_0.4-0.1               
+##  [37] globals_0.12.5                processx_3.4.2                ensembldb_2.13.1             
+##  [40] rlang_0.4.6                   splines_4.0.0                 rtracklayer_1.49.1           
+##  [43] lazyeval_0.2.2                reshape2_1.4.4                BiocManager_1.30.10          
+##  [46] yaml_2.2.1                    backports_1.1.6               httpuv_1.5.2                 
+##  [49] tools_4.0.0                   ellipsis_0.3.0                RColorBrewer_1.1-2           
+##  [52] sessioninfo_1.1.1             ggridges_0.5.2                Rcpp_1.0.4.6                 
+##  [55] plyr_1.8.6                    progress_1.2.2                zlibbioc_1.35.0              
+##  [58] purrr_0.3.4                   RCurl_1.98-1.2                ps_1.3.3                     
+##  [61] prettyunits_1.1.1             openssl_1.4.1                 pbapply_1.4-2                
+##  [64] viridis_0.5.1                 cowplot_1.0.0                 zoo_1.8-8                    
+##  [67] ggrepel_0.8.2                 cluster_2.1.0                 fs_1.4.1                     
+##  [70] magrittr_1.5                  data.table_1.12.8             lmtest_0.9-37                
+##  [73] RANN_2.6.1                    ProtGenerics_1.21.0           fitdistrplus_1.0-14          
+##  [76] pkgload_1.0.2                 hms_0.5.3                     patchwork_1.0.0              
+##  [79] lsei_1.2-0.1                  mime_0.9                      evaluate_0.14                
+##  [82] xtable_1.8-4                  XML_3.99-0.3                  gridExtra_2.3                
+##  [85] compiler_4.0.0                biomaRt_2.45.0                scater_1.17.0                
+##  [88] tibble_3.0.1                  KernSmooth_2.23-17            crayon_1.3.4                 
+##  [91] htmltools_0.4.0               later_1.0.0                   tidyr_1.0.3                  
+##  [94] DBI_1.1.0                     MASS_7.3-51.6                 rappdirs_0.3.1               
+##  [97] Matrix_1.2-18                 cli_2.0.2                     igraph_1.2.5                 
+## [100] pkgconfig_2.0.3               GenomicAlignments_1.25.0      plotly_4.9.2.1               
+## [103] vipor_0.4.5                   dqrng_0.2.1                   XVector_0.29.0               
+## [106] stringr_1.4.0                 callr_3.4.3                   digest_0.6.25                
+## [109] tsne_0.1-3                    sctransform_0.2.1             RcppAnnoy_0.0.16             
+## [112] Biostrings_2.57.0             leiden_0.3.3                  uwot_0.1.8                   
+## [115] edgeR_3.31.0                  DelayedMatrixStats_1.11.0     curl_4.3                     
+## [118] shiny_1.4.0.2                 Rsamtools_2.5.0               gtools_3.8.2                 
+## [121] lifecycle_0.2.0               nlme_3.1-147                  jsonlite_1.6.1               
+## [124] BiocNeighbors_1.7.0           desc_1.2.0                    viridisLite_0.3.0            
+## [127] askpass_1.1                   limma_3.45.0                  fansi_0.4.1                  
+## [130] pillar_1.4.4                  lattice_0.20-41               fastmap_1.0.1                
+## [133] httr_1.4.1                    pkgbuild_1.0.8                survival_3.1-12              
+## [136] interactiveDisplayBase_1.27.0 glue_1.4.0                    remotes_2.1.1                
+## [139] png_0.1-7                     BiocVersion_3.12.0            bit_1.1-15.2                 
+## [142] stringi_1.4.6                 blob_1.2.1                    BiocSingular_1.5.0           
+## [145] AnnotationHub_2.21.0          memoise_1.1.0                 dplyr_0.8.5                  
+## [148] irlba_2.3.3                   future.apply_1.5.0            ape_5.3
 ```
 
 ## References
