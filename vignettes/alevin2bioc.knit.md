@@ -39,24 +39,49 @@ counts for cells grouped into cell types labelled by marker genes.
 
 ## Running alevin
 
-In order to run *alevin*, we must first generate some metadata. We
-will link out to code for the steps for running *alevin*, and focus on
-importing data using R code chunks below. The output of running
+In order to run *alevin*, we must first generate an index of the
+reference sequences. For this experiment, we used
+the latest [GENCODE](https://www.gencodegenes.org/) human reference
+transcripts [@gencode], which happen to be version 33 (in April 2020
+version 34 was released). The index of the reference transcripts
+(FASTA) and a file linking transcripts to genes can be created
+following the instructions
+[here](https://combine-lab.github.io/alevin-tutorial/2018/setting-up-resources/). 
+(An alternative is to also include genome sequence that does not fall
+into transcripts as part of the index. Details for creating such an
+index are provided
+[here](https://combine-lab.github.io/alevin-tutorial/2019/selective-alignment/).)
+
+Finally, running *alevin* once an index has been created is just a
+single command, and detailed instructions can be found
+[here](https://combine-lab.github.io/alevin-tutorial/2018/running-alevin/).
+In this case, `--chromiumV3` was used and `--numCellBootstraps 30` in
+order to generate bootstrap inferential replicates. A simplified
+version of the command is shown below:
+
+```
+salmon alevin -l ISR \
+  -1 sample_L001_R1_001.fastq.gz \
+  -2 sample_L001_R2_001.fastq.gz \
+  --chromium3 -i index -p 12 -o sample --tgMap txp2gene.tsv \
+  --numCellBootstraps 30
+```
+
+Here, `-1` gives the CB+UMI file and `-2` gives the read sequence
+file. Multiple files can be provided to the arguments `-1` and `-2`
+with a single space between the files, as long as they are given in
+the same order to the two arguments.
+
+Even more details about *alevin* arguments can be found 
+[here](https://salmon.readthedocs.io/en/latest/alevin.html).
+
+For the rest of the tutorial we will focus on
+importing data into R/Bioconductor. The output directory of running
 *alevin* on the PBMC sequence data is included in this workflow
 package in the `extdata` directory. *alevin* took about 14 minutes to
 quantify 33 million reads from around 1700 cells. 30 bootstrap
 inferential replicates were generated, summarized to sparse
 inferential mean and variance matrices (discussed later).
-
-The step-by-step guidelines to process the reference sequence and
-generate the required data can be found
-[here](https://combine-lab.github.io/alevin-tutorial/2018/setting-up-resources/).
-
-Instructions on indexing a set of reference transcripts can be found
-[here](https://combine-lab.github.io/alevin-tutorial/2019/selective-alignment/). 
-For this experiment, we used the 
-[GENCODE](https://www.gencodegenes.org/) 
-human reference transcripts [@gencode].
 
 ## Importing alevin data with tximeta
 
