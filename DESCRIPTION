@@ -11,11 +11,10 @@ Description: A tutorial for importing alevin scRNA-seq quantifications
 License: MIT
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-VignetteBuilder:
-    knitr,
-    rmarkdown
-Depends: R (>= 3.5.0)
+Depends:
+    R (>= 3.5.0)
 Imports:
     tximeta,
     fishpond,
@@ -25,4 +24,9 @@ Imports:
     Seurat
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    pkgdown
+URL: https://mikelove.github.io/alevin2bioc/
+BugReports: https://github.com/mikelove/alevin2bioc/issues/new/choose
+VignetteBuilder: knitr
+DockerImage: mikelove/alevin2bioc:latest

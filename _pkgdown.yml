@@ -1,0 +1,14 @@
+url: https://mikelove.github.io/alevin2bioc
+
+template:
+  params:
+    bootswatch: flatly
+
+home:
+  title: "Importing alevin scRNA-seq counts into R/Bioconductor"
+  type: inverse
+
+navbar:
+  right:
+   - icon: fa-github
+     href: https://github.com/mikelove/alevin2bioc
