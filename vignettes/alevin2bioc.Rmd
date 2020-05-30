@@ -346,7 +346,7 @@ head(top10)
 In this section, we will begin to plot the counts for cells, for
 specific genes, and showing the *inferential uncertainty* as
 quantified by *alevin*. This is a unique aspect to the *alevin*
-quantification method, that it retains gene multi-mapping reads,
+quantification method, that it uses EM to assign gene multi-mapping reads,
 instead of discarding these reads. Note that many reads can be
 discarded with alternative pipelines, and these are not uniformly lost
 from all genes, but the number of multi-mapping reads is higher for
