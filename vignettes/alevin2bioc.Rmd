@@ -154,22 +154,6 @@ inferential mean and variance matrices (discussed later).
 
 ## Importing alevin data with tximeta
 
-```{r echo=FALSE}
-# hidden code chunk bc travis-ci doesn't like ftp
-# https://blog.travis-ci.com/2018-07-23-the-tale-of-ftp-at-travis-ci
-suppressPackageStartupMessages(library(BiocFileCache))
-bfc <- BiocFileCache()
-q <- bfcquery(bfc, "gencode.v33.annotation.gtf.gz")
-q <- q[q$rname=="gencode.v33.annotation.gtf.gz",]
-if (bfccount(q) == 0) {
-  suppressPackageStartupMessages(library(GenomicFeatures))
-  url <- "http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_33/gencode.v33.annotation.gtf.gz"
-  txdb <- makeTxDbFromGFF(url)
-  filename <- bfcnew(bfc, rname="gencode.v33.annotation.gtf.gz", ext=".sqlite")
-  saveDb(txdb, file=filename)
-}
-```
-
 We will use *tximeta* to import the *alevin* counts into
 R/Bioconductor. The main function `tximeta` reads information from the
 entire output directory of *alevin* or *Salmon* in order to
