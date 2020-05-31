@@ -1,7 +1,7 @@
 Package: alevin2bioc
 Type: Package
 Title: Tutorial for importing alevin scRNA-seq quantifications
-Version: 0.1.6
+Version: 0.1.7
 Authors@R: c(
     person("Michael", "Love", email="michaelisaiahlove@gmail.com", role = c("aut","cre")),
     person("Avi", "Srivastava", role = c("aut","ctb")))
