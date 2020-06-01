@@ -1,10 +1,7 @@
 ---
-output:
-  rmarkdown::html_document:
-    highlight: pygments
-    toc: true
-    toc_depth: 3
-    fig_width: 5
+title: "Importing alevin scRNA-seq counts into R/Bioconductor"
+author: "Michael Love and Avi Srivastava"
+output: rmarkdown::html_vignette
 bibliography: "`r file.path(system.file(package='alevin2bioc', 'vignettes'), 'library.bib')`"
 vignette: >
   %\VignetteIndexEntry{alevin2bioc}
