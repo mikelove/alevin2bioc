@@ -1,14 +1,14 @@
 Package: alevin2bioc
 Type: Package
 Title: Tutorial for importing alevin scRNA-seq quantifications
-Version: 0.1.11
+Version: 0.1.12
 Authors@R: c(
     person("Michael", "Love", email="michaelisaiahlove@gmail.com", role = c("aut","cre")),
     person("Avi", "Srivastava", role = c("aut","ctb")))
 Maintainer: Michael Love <michaelisaiahlove@gmail.com>
 Description: A tutorial for importing alevin scRNA-seq quantifications
     into R/Bioconductor, designed as a workshop for BioC2020.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
