@@ -85,7 +85,7 @@ An example for a 45-minute workshop:
 - hand-off to Seurat workflow
 
 ```{r setup, echo=FALSE, results="hide"}
-knitr::opts_chunk$set(cache=TRUE)
+knitr::opts_chunk$set(cache=FALSE)
 ```
 
 ## Introduction
