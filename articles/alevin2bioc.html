@@ -67,7 +67,7 @@
 
       
 
-      </header><script src="alevin2bioc_files/header-attrs-2.1/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Importing alevin scRNA-seq counts into R/Bioconductor</h1>
@@ -222,10 +222,16 @@
 <pre><code>## reading in alevin inferential variance with fishpond</code></pre>
 <pre><code>## found matching transcriptome:
 ## [ GENCODE - Homo sapiens - release 33 ]</code></pre>
-<pre><code>## loading existing TxDb created: 2020-05-13 16:17:46</code></pre>
-<pre><code>## generating gene ranges</code></pre>
-<pre><code>## loading existing gene ranges created: 2020-05-13 16:17:51</code></pre>
-<pre><code>## fetching genome info for GENCODE</code></pre>
+<pre><code>## building TxDb with 'GenomicFeatures' package</code></pre>
+<pre><code>## Import genomic features from the file as a GRanges object ... OK
+## Prepare the 'metadata' data frame ... OK
+## Make the TxDb object ...</code></pre>
+<pre><code>## Warning in .get_cds_IDX(mcols0$type, mcols0$phase): The "phase" metadata column contains non-NA values for features of type
+##   stop_codon. This information was ignored.</code></pre>
+<pre><code>## OK
+## generating gene ranges
+## generating gene ranges
+## fetching genome info for GENCODE</code></pre>
 <p>We can see as it was importing that it automatically detected we are working with data quantified using GENCODE’s <em>Homo sapiens</em> reference transcripts, release 33. The transcript metadata was added programmatically to the output (this object, <code>se</code>). <code>tximeta</code> is also written in such a way that it will avoid unnecessary downloads and parsing of files – it will first attempt to find a cached version of the metadata, to avoid re-downloading or re-parsing these files.</p>
 <p><code>tximeta</code> returns a <em>SummarizedExperiment</em> <span class="citation">(Lawrence et al. 2013)</span>. We can easily convert this object into a <em>SingleCellExperiment</em> <span class="citation">(Amezquita et al. 2020)</span> which has specific slots designed for single-cell experiment data.</p>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">SingleCellExperiment</span>))
@@ -432,7 +438,7 @@
 <div id="scaling-with-size-factors" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scaling-with-size-factors" class="anchor"></a>Scaling with size factors</h2>
-<p>We use <code>computeSumFactors</code> <span class="citation">(Lun, Bach, and Marioni 2016)</span> from the <em>scran</em> package <span class="citation">(A. T. L. Lun, McCarthy, and Marioni 2016)</span> to compute size factors that are stored in <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/sizeFactors.html">sizeFactors(sce)</a></code>.</p>
+<p>We use <code>computeSumFactors</code> <span class="citation">(Lun, Bach, and Marioni 2016)</span> from the <em>scran</em> package <span class="citation">(A. Lun, McCarthy, and Marioni 2016)</span> to compute size factors that are stored in <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/sizeFactors.html">sizeFactors(sce)</a></code>.</p>
 <div class="sourceCode" id="cb53"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">scran</span>)
 <span class="no">sce</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/computeSumFactors.html">computeSumFactors</a></span>(<span class="no">sce</span>, <span class="kw">clusters</span><span class="kw">=</span><span class="no">sce</span>$<span class="no">cluster</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">cs</span>, <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/sizeFactors.html">sizeFactors</a></span>(<span class="no">sce</span>), <span class="kw">xlab</span><span class="kw">=</span><span class="st">"column sum"</span>, <span class="kw">ylab</span><span class="kw">=</span><span class="st">"sum factor"</span>)</pre></body></html></div>
@@ -518,7 +524,7 @@
 <div id="support" class="section level2">
 <h2 class="hasAnchor">
 <a href="#support" class="anchor"></a>Support</h2>
-<p>For support on this tutorial, feel free to post to <a href="https://support.bioconductor.org" class="uri">https://support.bioconductor.org</a> and tag the post with the appropriate package (e.g. <code>tximeta</code> if the question is particular to the <code>tximeta</code> import aspect). If you are asking about a particular function, don’t forget to first read the man page (e.g. <code><a href="https://rdrr.io/pkg/tximeta/man/tximeta.html">?tximeta</a></code>), and also check the relevant package vignette for relevant details (e.g. <a href="https://bioconductor.org/packages/release/bioc/vignettes/tximeta/inst/doc/tximeta.html">tximeta vignette</a>).</p>
+<p>For support on this tutorial, feel free to post to <a href="https://support.bioconductor.org" class="uri">https://support.bioconductor.org</a> and tag the post with the appropriate package (e.g. <code>tximeta</code> if the question is particular to the <code>tximeta</code> import aspect). If you are asking about a particular function, don’t forget to first read the man page (e.g. <code><a href="https://rdrr.io/pkg/tximeta/man/tximeta.html">?tximeta</a></code>), and also check the relevant package vignette for relevant details (e.g. <a href="https://bioconductor.org/packages/release/bioc/vignettes/tximeta/inst/doc/tximeta.html">tximeta vignette</a>).</p>
 <p>For questions about <em>alevin</em>, first consult the online documentation at these links</p>
 <p><a href="https://combine-lab.github.io/alevin-tutorial/" class="uri">https://combine-lab.github.io/alevin-tutorial/</a></p>
 <p><a href="https://salmon.readthedocs.io/en/latest/alevin.html" class="uri">https://salmon.readthedocs.io/en/latest/alevin.html</a></p>
@@ -530,33 +536,37 @@
 <a href="#session-info" class="anchor"></a>Session info</h2>
 <div class="sourceCode" id="cb67"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()</pre></body></html></div>
 <pre><code>## R version 4.0.0 (2020-04-24)
-## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.4
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.4 LTS
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
 ## 
 ## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
 ## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] Seurat_3.1.5                ggplot2_3.3.0              
-##  [3] scran_1.17.0                fishpond_1.5.21            
-##  [5] org.Hs.eg.db_3.11.1         SingleCellExperiment_1.11.1
-##  [7] SummarizedExperiment_1.19.2 DelayedArray_0.15.1        
-##  [9] matrixStats_0.56.0          tximeta_1.7.3              
+##  [1] Seurat_3.1.5                ggplot2_3.3.1              
+##  [3] scran_1.17.0                fishpond_1.5.33            
+##  [5] org.Hs.eg.db_3.11.4         SingleCellExperiment_1.11.2
+##  [7] SummarizedExperiment_1.19.4 DelayedArray_0.15.1        
+##  [9] matrixStats_0.56.0          tximeta_1.7.5              
 ## [11] GenomicFeatures_1.41.0      AnnotationDbi_1.51.0       
 ## [13] Biobase_2.49.0              GenomicRanges_1.41.1       
-## [15] GenomeInfoDb_1.25.0         IRanges_2.23.4             
-## [17] S4Vectors_0.27.5            BiocGenerics_0.35.2        
+## [15] GenomeInfoDb_1.25.0         IRanges_2.23.6             
+## [17] S4Vectors_0.27.9            BiocGenerics_0.35.2        
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] backports_1.1.6               AnnotationHub_2.21.0         
+##   [1] backports_1.1.7               AnnotationHub_2.21.0         
 ##   [3] BiocFileCache_1.13.0          plyr_1.8.6                   
 ##   [5] igraph_1.2.5                  lazyeval_0.2.2               
 ##   [7] splines_4.0.0                 listenv_0.8.0                
@@ -566,75 +576,74 @@
 ##  [15] magrittr_1.5                  memoise_1.1.0                
 ##  [17] cluster_2.1.0                 ROCR_1.0-11                  
 ##  [19] limma_3.45.0                  globals_0.12.5               
-##  [21] Biostrings_2.57.0             askpass_1.1                  
+##  [21] Biostrings_2.57.1             askpass_1.1                  
 ##  [23] pkgdown_1.5.1                 prettyunits_1.1.1            
 ##  [25] colorspace_1.4-1              ggrepel_0.8.2                
 ##  [27] blob_1.2.1                    rappdirs_0.3.1               
-##  [29] xfun_0.13                     dplyr_0.8.5                  
+##  [29] xfun_0.14                     dplyr_1.0.0                  
 ##  [31] crayon_1.3.4                  RCurl_1.98-1.2               
 ##  [33] jsonlite_1.6.1                tximport_1.17.0              
 ##  [35] hexbin_1.28.1                 zoo_1.8-8                    
 ##  [37] survival_3.1-12               ape_5.3                      
-##  [39] glue_1.4.0                    gtable_0.3.0                 
-##  [41] zlibbioc_1.35.0               XVector_0.29.0               
+##  [39] glue_1.4.1                    gtable_0.3.0                 
+##  [41] zlibbioc_1.35.0               XVector_0.29.1               
 ##  [43] leiden_0.3.3                  BiocSingular_1.5.0           
 ##  [45] future.apply_1.5.0            scales_1.1.1                 
-##  [47] DBI_1.1.0                     edgeR_3.31.0                 
+##  [47] DBI_1.1.0                     edgeR_3.31.1                 
 ##  [49] Rcpp_1.0.4.6                  viridisLite_0.3.0            
 ##  [51] xtable_1.8-4                  progress_1.2.2               
-##  [53] reticulate_1.15               dqrng_0.2.1                  
+##  [53] reticulate_1.16               dqrng_0.2.1                  
 ##  [55] bit_1.1-15.2                  rsvd_1.0.3                   
 ##  [57] tsne_0.1-3                    htmlwidgets_1.5.1            
 ##  [59] httr_1.4.1                    RColorBrewer_1.1-2           
-##  [61] ellipsis_0.3.0                ica_1.0-2                    
+##  [61] ellipsis_0.3.1                ica_1.0-2                    
 ##  [63] pkgconfig_2.0.3               XML_3.99-0.3                 
 ##  [65] farver_2.0.3                  uwot_0.1.8                   
-##  [67] dbplyr_1.4.3                  locfit_1.5-9.4               
-##  [69] reshape2_1.4.4                tidyselect_1.0.0             
+##  [67] dbplyr_1.4.4                  locfit_1.5-9.4               
+##  [69] reshape2_1.4.4                tidyselect_1.1.0             
 ##  [71] labeling_0.3                  rlang_0.4.6                  
 ##  [73] later_1.0.0                   munsell_0.5.0                
 ##  [75] BiocVersion_3.12.0            tools_4.0.0                  
-##  [77] RSQLite_2.2.0                 ggridges_0.5.2               
-##  [79] evaluate_0.14                 stringr_1.4.0                
-##  [81] fastmap_1.0.1                 yaml_2.2.1                   
-##  [83] npsurv_0.4-0.1                knitr_1.28                   
+##  [77] generics_0.0.2                RSQLite_2.2.0                
+##  [79] ggridges_0.5.2                evaluate_0.14                
+##  [81] stringr_1.4.0                 fastmap_1.0.1                
+##  [83] yaml_2.2.1                    knitr_1.28                   
 ##  [85] bit64_0.9-7                   fs_1.4.1                     
-##  [87] fitdistrplus_1.0-14           purrr_0.3.4                  
+##  [87] fitdistrplus_1.1-1            purrr_0.3.4                  
 ##  [89] RANN_2.6.1                    AnnotationFilter_1.13.0      
 ##  [91] pbapply_1.4-2                 future_1.17.0                
 ##  [93] nlme_3.1-147                  mime_0.9                     
 ##  [95] biomaRt_2.45.0                compiler_4.0.0               
 ##  [97] png_0.1-7                     plotly_4.9.2.1               
 ##  [99] beeswarm_0.2.3                curl_4.3                     
-## [101] interactiveDisplayBase_1.27.0 lsei_1.2-0.1                 
-## [103] tibble_3.0.1                  statmod_1.4.34               
-## [105] stringi_1.4.6                 desc_1.2.0                   
-## [107] lattice_0.20-41               ProtGenerics_1.21.0          
-## [109] Matrix_1.2-18                 vctrs_0.2.4                  
-## [111] pillar_1.4.4                  lifecycle_0.2.0              
-## [113] BiocManager_1.30.10           lmtest_0.9-37                
-## [115] RcppAnnoy_0.0.16              BiocNeighbors_1.7.0          
-## [117] data.table_1.12.8             cowplot_1.0.0                
-## [119] bitops_1.0-6                  irlba_2.3.3                  
-## [121] patchwork_1.0.0               httpuv_1.5.2                 
-## [123] rtracklayer_1.49.1            R6_2.4.1                     
-## [125] promises_1.1.0                KernSmooth_2.23-17           
-## [127] gridExtra_2.3                 vipor_0.4.5                  
-## [129] codetools_0.2-16              MASS_7.3-51.6                
-## [131] gtools_3.8.2                  assertthat_0.2.1             
-## [133] openssl_1.4.1                 rprojroot_1.3-2              
-## [135] withr_2.2.0                   sctransform_0.2.1            
-## [137] GenomicAlignments_1.25.0      Rsamtools_2.5.0              
-## [139] GenomeInfoDbData_1.2.3        hms_0.5.3                    
-## [141] grid_4.0.0                    tidyr_1.0.3                  
-## [143] rmarkdown_2.1                 DelayedMatrixStats_1.11.0    
-## [145] Rtsne_0.15                    shiny_1.4.0.2                
-## [147] ggbeeswarm_0.6.0</code></pre>
+## [101] interactiveDisplayBase_1.27.2 tibble_3.0.1                 
+## [103] statmod_1.4.34                stringi_1.4.6                
+## [105] desc_1.2.0                    lattice_0.20-41              
+## [107] ProtGenerics_1.21.0           Matrix_1.2-18                
+## [109] vctrs_0.3.0                   pillar_1.4.4                 
+## [111] lifecycle_0.2.0               BiocManager_1.30.10          
+## [113] lmtest_0.9-37                 RcppAnnoy_0.0.16             
+## [115] BiocNeighbors_1.7.0           data.table_1.12.8            
+## [117] cowplot_1.0.0                 bitops_1.0-6                 
+## [119] irlba_2.3.3                   patchwork_1.0.0              
+## [121] httpuv_1.5.3.1                rtracklayer_1.49.2           
+## [123] R6_2.4.1                      promises_1.1.0               
+## [125] KernSmooth_2.23-16            gridExtra_2.3                
+## [127] vipor_0.4.5                   codetools_0.2-16             
+## [129] MASS_7.3-51.5                 gtools_3.8.2                 
+## [131] assertthat_0.2.1              openssl_1.4.1                
+## [133] rprojroot_1.3-2               withr_2.2.0                  
+## [135] sctransform_0.2.1             GenomicAlignments_1.25.1     
+## [137] Rsamtools_2.5.1               GenomeInfoDbData_1.2.3       
+## [139] hms_0.5.3                     grid_4.0.0                   
+## [141] tidyr_1.1.0                   rmarkdown_2.2                
+## [143] DelayedMatrixStats_1.11.0     Rtsne_0.15                   
+## [145] shiny_1.4.0.2                 ggbeeswarm_0.6.0</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
-<div id="refs" class="references hanging-indent">
+<div id="refs" class="references">
 <div id="ref-pbmc">
 <p>“1k Pbmcs from a Healthy Donor (V2 Chemistry).” n.d. <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/pbmc_1k_v2">https://support.10xgenomics.com/single-cell-gene-expression/datasets/3.0.0/pbmc_1k_v2</a>.</p>
 </div>
@@ -654,10 +663,10 @@
 <p>Lun, Aaron T. L., Karsten Bach, and John C. Marioni. 2016. “Pooling across cells to normalize single-cell RNA sequencing data with many zero counts.” <em>Genome Biology</em> 17 (1): 75. <a href="https://doi.org/10.1186/s13059-016-0947-7">https://doi.org/10.1186/s13059-016-0947-7</a>.</p>
 </div>
 <div id="ref-scran">
-<p>Lun, A. T. L., D. J. McCarthy, and J. C. Marioni. 2016. “A Step-by-Step Workflow for Low-Level Analysis of Single-Cell Rna-Seq Data with Bioconductor.” <em>F1000Research</em> 5: 2122. <a href="https://doi.org/10.12688/f1000research.9501.2">https://doi.org/10.12688/f1000research.9501.2</a>.</p>
+<p>Lun, A.T.L., D.J. McCarthy, and J.C. Marioni. 2016. “A Step-by-Step Workflow for Low-Level Analysis of Single-Cell Rna-Seq Data with Bioconductor.” <em>F1000Research</em> 5: 2122. <a href="https://doi.org/10.12688/f1000research.9501.2">https://doi.org/10.12688/f1000research.9501.2</a>.</p>
 </div>
 <div id="ref-salmon">
-<p>Patro, R., G. Duggal, M. I. Love, R. A. Irizarry, and C. Kingsford. 2017. “Salmon Provides Fast and Bias-Aware Quantification of Transcript Expression.” <em>Nature Methods</em> 14: 417–19. <a href="https://doi.org/10.1038/nmeth.4197">https://doi.org/10.1038/nmeth.4197</a>.</p>
+<p>Patro, R., G. Duggal, M.I. Love, R.A. Irizarry, and C. Kingsford. 2017. “Salmon Provides Fast and Bias-Aware Quantification of Transcript Expression.” <em>Nature Methods</em> 14: 417–19. <a href="https://doi.org/10.1038/nmeth.4197">https://doi.org/10.1038/nmeth.4197</a>.</p>
 </div>
 <div id="ref-Pijuan-Sala2019">
 <p>Pijuan-Sala, Blanca, Jonathan A. Griffiths, Carolina Guibentif, Tom W. Hiscock, Wajid Jawaid, Fernando J. Calero-Nieto, Carla Mulas, et al. 2019. “A Single-Cell Molecular Map of Mouse Gastrulation and Early Organogenesis.” <em>Nature</em> 566 (7745): 490–95. <a href="https://doi.org/10.1038/s41586-019-0933-9">https://doi.org/10.1038/s41586-019-0933-9</a>.</p>
@@ -669,7 +678,7 @@
 <p>Stuart, Tim, Andrew Butler, Paul Hoffman, Christoph Hafemeister, Efthymia Papalexi, William M Mauck III, Yuhan Hao, Marlon Stoeckius, Peter Smibert, and Rahul Satija. 2019. “Comprehensive Integration of Single-Cell Data.” <em>Cell</em> 177: 1888–1902. <a href="https://doi.org/10.1016/j.cell.2019.05.031">https://doi.org/10.1016/j.cell.2019.05.031</a>.</p>
 </div>
 <div id="ref-swish">
-<p>Zhu, A., A. Srivastava, J. G. Ibrahim, R. Patro, and M. I. Love. 2019. “Nonparametric expression analysis using inferential replicate counts.” <em>Nucleic Acids Research</em>. <a href="https://doi.org/10.1093/nar/gkz622">https://doi.org/10.1093/nar/gkz622</a>.</p>
+<p>Zhu, A., A. Srivastava, J.G. Ibrahim, R. Patro, and M.I. Love. 2019. “Nonparametric expression analysis using inferential replicate counts.” <em>Nucleic Acids Research</em>. <a href="https://doi.org/10.1093/nar/gkz622">https://doi.org/10.1093/nar/gkz622</a>.</p>
 </div>
 </div>
 </div>

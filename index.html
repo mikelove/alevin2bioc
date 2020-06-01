@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">alevin2bioc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -73,7 +73,29 @@
 <div id="alevin2bioc" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#alevin2bioc" class="anchor"></a>alevin2bioc</h1></div>
-<p>Tutorial for importing alevin scRNA-seq quantifications into R/Bioconductor</p>
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h2>
+<p>This package is a workflow for <a href="https://bioc2020.bioconductor.org/">BioC2020</a> and provides an online vignette describing how to import <a href="https://salmon.readthedocs.io/en/latest/alevin.html">alevin</a> scRNA-seq quantifications into R/Bioconductor. The developers of the workflow are listed in the sidebar.</p>
+</div>
+<div id="vignette" class="section level2">
+<h2 class="hasAnchor">
+<a href="#vignette" class="anchor"></a>Vignette</h2>
+<p>The workflow vignette can be accessed by clicking <code>Get started</code> in the top navigation bar.</p>
+</div>
+<div id="running-the-workflow-on-your-machine" class="section level2">
+<h2 class="hasAnchor">
+<a href="#running-the-workflow-on-your-machine" class="anchor"></a>Running the workflow on your machine</h2>
+<p>The vignette is designed for R <code>4.0</code> and the <code>devel</code> branch of Bioconductor. The easiest way to try out the workflow is to use the Docker image (see section below), which has all the software pre-configured to the correct versions. The workflow should also work with the <code>release</code> branch of Bioconductor (v3.11) except for one package, <em>fishpond</em>, which has additional functionality demonstrated here that only is supported in the <code>devel</code> branch. If you are using the <code>release</code> branch on your laptop, and want to try this workflow, it should be sufficient to install <code>release</code> branch of all packages, and then only updating <em>fishpond</em> to <code>devel</code> with:</p>
+<pre><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github("mikelove/fishpond", dependencies=FALSE)</a></code></pre>
+</div>
+<div id="docker-image" class="section level2">
+<h2 class="hasAnchor">
+<a href="#docker-image" class="anchor"></a>Docker image</h2>
+<p>A Docker image can be run for this workflow:</p>
+<pre><code>docker run -e PASSWORD=abc -p 8787:8787 mikelove/alevin2bioc</code></pre>
+<p>Once running, navigate to <a href="http://localhost:8787/" class="uri">http://localhost:8787/</a> and then login with <code>rstudio:yourchosenpassword</code>.</p>
+</div>
 </div>
   </div>
 
@@ -97,8 +119,8 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Michael Love <br><small class="roles"> Author, maintainer </small>  </li>
-<li>Avi Srivastava <br><small class="roles"> Author, contributor </small>  </li>
+<li>Michael Love <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-8401-0545" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Avi Srivastava <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-9798-2079" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
