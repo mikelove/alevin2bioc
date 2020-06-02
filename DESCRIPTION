@@ -1,7 +1,7 @@
 Package: alevin2bioc
 Type: Package
 Title: Tutorial for importing alevin scRNA-seq quantifications
-Version: 0.1.13
+Version: 0.1.14
 Authors@R: c(
     person("Michael", "Love",
     email="michaelisaiahlove@gmail.com",

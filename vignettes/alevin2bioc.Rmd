@@ -129,7 +129,7 @@ version of the command is shown below:
 salmon alevin -l ISR \
   -1 sample_L001_R1_001.fastq.gz \
   -2 sample_L001_R2_001.fastq.gz \
-  --chromium3 -i index -p 12 -o sample --tgMap txp2gene.tsv \
+  --chromiumV3 -i index -p 12 -o sample --tgMap txp2gene.tsv \
   --numCellBootstraps 30
 ```
 
