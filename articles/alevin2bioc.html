@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">alevin2bioc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.14</span>
       </span>
     </div>
 
@@ -192,7 +192,7 @@
 <pre><code>salmon alevin -l ISR \
   -1 sample_L001_R1_001.fastq.gz \
   -2 sample_L001_R2_001.fastq.gz \
-  --chromium3 -i index -p 12 -o sample --tgMap txp2gene.tsv \
+  --chromiumV3 -i index -p 12 -o sample --tgMap txp2gene.tsv \
   --numCellBootstraps 30</code></pre>
 <p>Here, <code>-1</code> gives the CB+UMI file and <code>-2</code> gives the read sequence file. Multiple files can be provided to the arguments <code>-1</code> and <code>-2</code> with a single space between the files, as long as they are given in the same order to the two arguments.</p>
 <p>Even more details about <em>alevin</em> arguments can be found <a href="https://salmon.readthedocs.io/en/latest/alevin.html">here</a>.</p>
