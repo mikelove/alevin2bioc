@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">alevin2bioc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.15</span>
       </span>
     </div>
 
@@ -95,6 +95,14 @@
 <p>A Docker image can be run for this workflow:</p>
 <pre><code>docker run -e PASSWORD=abc -p 8787:8787 mikelove/alevin2bioc</code></pre>
 <p>Once running, navigate to <a href="http://localhost:8787/" class="uri">http://localhost:8787/</a> and then login with <code>rstudio:yourchosenpassword</code>.</p>
+</div>
+<div id="miniconda-message" class="section level2">
+<h2 class="hasAnchor">
+<a href="#miniconda-message" class="anchor"></a>Miniconda message</h2>
+<p>If you load <em>Seurat</em> during the workflow, it loads <em>reticulate</em> which triggers the following message:</p>
+<pre><code>No non-system installation of Python could be found. 
+Would you like to download and install Miniconda?</code></pre>
+<p>Just type <code>n</code> in response.</p>
 </div>
 </div>
   </div>
