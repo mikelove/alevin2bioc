@@ -41,3 +41,15 @@ docker run -e PASSWORD=abc -p 8787:8787 mikelove/alevin2bioc
 
 Once running, navigate to <http://localhost:8787/> and then login with
 `rstudio:yourchosenpassword`.
+
+## Miniconda message
+
+If you load *Seurat* during the workflow, it loads *reticulate* which
+triggers the following message:
+
+```
+No non-system installation of Python could be found. 
+Would you like to download and install Miniconda?
+```
+
+Just type `n` in response.

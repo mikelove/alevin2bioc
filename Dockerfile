@@ -9,4 +9,4 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN Rscript -e "devtools::install('.', dependencies=TRUE, repos = BiocManager::repositories())"
+RUN Rscript -e "devtools::install('.', dependencies=TRUE, build_vignettes=TRUE, repos = BiocManager::repositories())"

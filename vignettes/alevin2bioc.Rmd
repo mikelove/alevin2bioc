@@ -1,6 +1,8 @@
 ---
 title: "Importing alevin scRNA-seq counts into R/Bioconductor"
-author: "Michael Love and Avi Srivastava"
+author: 
+  - Michael I. Love, UNC-Chapel Hill, [website](https://mikelove.github.io)
+  - Avi Srivastava, New York Genome Center, [website](https://k3yavi.github.io)
 output: rmarkdown::html_vignette
 bibliography: "`r file.path(system.file(package='alevin2bioc', 'vignettes'), 'library.bib')`"
 vignette: >
@@ -8,15 +10,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding[utf8]{inputenc}
 ---
-
-# Importing alevin scRNA-seq counts into R/Bioconductor
-
-## Instructors names and contact information
-
-* [Dr. Michael Love](https://mikelove.github.io) - Assistant Professor
-in the Dept. of Biostatistics and Dept. of Genetics at UNC-Chapel Hill
-* [Dr. Avi Srivastava](https://k3yavi.github.io) - Postdoctoral Research
-Associate in the Satija lab at the New York Genome Center 
 
 ## Workshop Description
 
@@ -32,8 +25,10 @@ for questions and interactions with the participants. We imagine that
 the target participant for the workshop probably has some dscRNA-seq 
 data, and knows about e.g. generating a count matrix with *CellRanger*.
 We will show an alternative quantification pipeline and explain its
-benefits. We will show hand off of the data to OSCA (Bioconductor's
-online book) as well as to Seurat.
+benefits. We will show how to hand off the data object to
+[common single cell workflows in Bioconductor (OSCA)](https://osca.bioconductor.org/)
+as well as to 
+[Seurat](https://satijalab.org/seurat/).
 
 ### Pre-requisites
 
