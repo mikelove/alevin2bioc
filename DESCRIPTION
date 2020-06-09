@@ -30,7 +30,8 @@ Imports:
     org.Hs.eg.db,
     GenomicFeatures,
     matrixStats,
-    ggplot2
+    ggplot2,
+    DelayedArray
 Suggests:
     knitr,
     rmarkdown,
