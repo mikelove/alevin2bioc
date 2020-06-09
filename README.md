@@ -1,5 +1,11 @@
 # alevin2bioc
 
+![](https://github.com/mikelove/alevin2bioc/workflows/.github/workflows/basic_checks.yaml/badge.svg)
+
+Build URL: https://mikelove.github.io/alevin2bioc
+
+Docker image: https://hub.docker.com/repository/docker/mikelove/alevin2bioc
+
 ## Introduction
 
 This package is a workflow for 
