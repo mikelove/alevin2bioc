@@ -186,6 +186,7 @@
   --numCellBootstraps 30</code></pre>
 <p>Here, <code>-1</code> gives the CB+UMI file and <code>-2</code> gives the read sequence file. Multiple files can be provided to the arguments <code>-1</code> and <code>-2</code> with a single space between the files, as long as they are given in the same order to the two arguments.</p>
 <p>Even more details about <em>alevin</em> arguments can be found <a href="https://salmon.readthedocs.io/en/latest/alevin.html">here</a>.</p>
+<p><img width="600" src="alevin.gif"></p>
 <p>For the rest of the tutorial we will focus on importing data into R/Bioconductor. The output directory of running <em>alevin</em> on the PBMC sequence data is included in this workflow package in the <code>extdata</code> directory. <em>alevin</em> took about 14 minutes to quantify 33 million reads from around 1700 cells. 30 bootstrap inferential replicates were generated, summarized to sparse inferential mean and variance matrices (discussed later).</p>
 </div>
 <div id="importing-alevin-data-with-tximeta" class="section level2">
