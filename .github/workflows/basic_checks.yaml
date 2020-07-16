@@ -32,6 +32,7 @@ jobs:
           
       - name: Install dependencies
         run: |
+          options(repos = c(CRAN = "https://cran.r-project.org"))
           remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories())
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
