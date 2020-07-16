@@ -136,6 +136,8 @@ the same order to the two arguments.
 Even more details about *alevin* arguments can be found 
 [here](https://salmon.readthedocs.io/en/latest/alevin.html).
 
+<img width=600 src="alevin.gif">
+
 For the rest of the tutorial we will focus on
 importing data into R/Bioconductor. The output directory of running
 *alevin* on the PBMC sequence data is included in this workflow
