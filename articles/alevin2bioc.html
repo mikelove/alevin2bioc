@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">alevin2bioc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.23</span>
       </span>
     </div>
 
@@ -67,7 +67,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="alevin2bioc_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Importing alevin scRNA-seq counts into R/Bioconductor</h1>
@@ -88,7 +88,7 @@
 <h2 class="hasAnchor">
 <a href="#workshop-description" class="anchor"></a>Workshop Description</h2>
 <p>In this workshop, we will demonstrate basics of quantification of droplet-based scRNA-seq reads using <em>alevin</em>, producing a count matrix for import into Bioconductor using <em>tximeta</em>, in the end producing a <em>SingleCellExperiment</em> object. We will also demonstrate the ability of alevin to provide quantification uncertainty on the count matrix, and visualize this uncertainty across cells.</p>
-<p>We plan the workshop to be an instructor-led live demo with time for questions and interactions with the participants. We imagine that the target participant for the workshop probably has some dscRNA-seq data, and knows about e.g. generating a count matrix with <em>CellRanger</em>. We will show an alternative quantification pipeline and explain its benefits. We will show how to hand off the data object to <a href="https://osca.bioconductor.org/">common single cell workflows in Bioconductor (OSCA)</a> as well as to <a href="https://satijalab.org/seurat/">Seurat</a>.</p>
+<p>We plan the workshop to be an instructor-led live demo with time for questions and interactions with the participants. We imagine that the target participant for the workshop probably has some dscRNA-seq data, and knows about e.g. generating a count matrix with <em>CellRanger</em>. We will show an alternative quantification pipeline and explain its benefits. We will show how to hand off the data object to <a href="https://osca.bioconductor.org/">common single-cell workflows in Bioconductor (OSCA)</a> as well as to <a href="https://satijalab.org/seurat/">Seurat</a>.</p>
 <div id="pre-requisites" class="section level3">
 <h3 class="hasAnchor">
 <a href="#pre-requisites" class="anchor"></a>Pre-requisites</h3>
@@ -227,7 +227,7 @@
 <p><code>tximeta</code> returns a <em>SummarizedExperiment</em> <span class="citation">(Lawrence et al. 2013)</span>. We can easily convert this object into a <em>SingleCellExperiment</em> <span class="citation">(Amezquita et al. 2020)</span> which has specific slots designed for single-cell experiment data.</p>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">SingleCellExperiment</span>))
 <span class="no">sce</span> <span class="kw">&lt;-</span> <span class="fu">as</span>(<span class="no">se</span>, <span class="st">"SingleCellExperiment"</span>)</pre></body></html></div>
-<p>The <em>SingleCellExperiment</em> object is used widely across Bioconductor packages (as you may already know), and so the code up to this point can be used as an entry point into other Bioconductor single cell workflows. For more details on working with <em>SingleCellExperiment</em> objects, one can consult the following online book: <a href="https://osca.bioconductor.org/">Orchestrating Single-Cell Analysis with Bioconductor</a> <span class="citation">(Amezquita et al. 2020)</span>.</p>
+<p>The <em>SingleCellExperiment</em> object is used widely across Bioconductor packages (as you may already know), and so the code up to this point can be used as an entry point into other Bioconductor single-cell workflows. For more details on working with <em>SingleCellExperiment</em> objects, one can consult the following online book: <a href="https://osca.bioconductor.org/">Orchestrating Single-Cell Analysis with Bioconductor</a> <span class="citation">(Amezquita et al. 2020)</span>.</p>
 <p>The data is now available as assays in <code>sce</code>. We can see what is available:</p>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu">assayNames</span>(<span class="no">sce</span>)</pre></body></html></div>
 <pre><code>## [1] "counts"   "variance" "mean"</code></pre>
@@ -392,7 +392,7 @@
 <p>In this section, we will begin to plot the counts for cells, for specific genes, and showing the <em>inferential uncertainty</em> as quantified by <em>alevin</em>. This is a unique aspect to the <em>alevin</em> quantification method, that it uses EM to assign gene multi-mapping reads, instead of discarding these reads. Note that many reads can be discarded with alternative pipelines, and these are not uniformly lost from all genes, but the number of multi-mapping reads is higher for gene families (i.e. genes with high sequence homology). See the <em>alevin</em> publication for more details on this aspect of bias in dscRNA-seq counts <span class="citation">(Srivastava et al. 2019)</span>.</p>
 <p>To get a systematic sense of how many reads are preserved by using EM-based assignment of multi-mapping, consider the following plot constructed using a recent dataset of mouse embryos <span class="citation">(Pijuan-Sala et al. 2019)</span>. Focusing on genes where the count changes by more than 50%, the left side shows the total count per gene (summed over cells) without EM, and the right side shows the gene counts using <em>alevin</em> with EM.</p>
 <p><img width="400" src="em_plot.png"></p>
-<p><em>alevin</em> can also attach a measure of uncertainty to each count in the matrix. <em>alevin</em> computes the mean and variance of <em>inferential replicates</em> which are generated by bootstrapping the read data. <code>tximeta</code> will import these inferential mean and variance matrices by default (they are also sparse, similar to the counts matrix).</p>
+<p><em>alevin</em> can also attach a measure of uncertainty to each count in the matrix. <em>alevin</em> computes the mean and variance of <em>inferential replicates</em> which are generated by bootstrapping the read data. <code>tximeta</code> will import these inferential mean and variance matrices by default (they are also sparse, similar to the counts matrix). The developers of <em>alevin</em> and <em>fishpond</em> have recently examined the use of the compressed inferential uncertainty matrices in various single-cell analysis tasks, including DE and trajectory analysis <span class="citation">(Van Buren et al. 2020)</span>.</p>
 <p>We will first visualize the uncertainty, and later give an example of a set of genes where the uncertainty is indicating significant quantification uncertainty which is useful to consider when performing EDA (exploratory data analysis) or statistical analysis.</p>
 <p>For a later demonstration of scaling, we will sort the cells by the total count (this is not something you would necessarily do in a typical analysis).</p>
 <div class="sourceCode" id="cb48"><html><body><pre class="r"><span class="no">o</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/colSums.html">colSums</a></span>(<span class="fu">assays</span>(<span class="no">sce</span>)<span class="kw">[[</span><span class="st">"counts"</span>]]), <span class="kw">decreasing</span><span class="kw">=</span><span class="fl">TRUE</span>)
@@ -448,7 +448,7 @@
 <h2 class="hasAnchor">
 <a href="#inferential-variance-uncertainty" class="anchor"></a>Inferential variance (uncertainty)</h2>
 <p>In this second to last section, we will briefly talk about how the inferential uncertainty as stored in the variance assay may be useful in practice.</p>
-<p>Many users may prefer to just work with the counts matrix, and not consider the inferential mean and variance. We have found that, globally, this may not lead to too much of a problem, but for certain genes, it may be important to use the inferential variance in cases where it may signal difficult to quantify genes. Inferential uncertainty for bulk and single cell RNA-seq differential expression was a focus of the <em>Swish</em> nonparametric statistical method <span class="citation">(Zhu et al. 2019)</span> which we do not demonstrate here, but one can refer to the vignette of <a href="https://bioconductor.org/packages/swish">swish</a> for more details (in particular the section on <em>alevin</em> data).</p>
+<p>Many users may prefer to just work with the counts matrix, and not consider the inferential mean and variance. We have found that, globally, this may not lead to too much of a problem, but for certain genes, it may be important to use the inferential variance in cases where it may signal difficult to quantify genes. Inferential uncertainty for bulk and single-cell RNA-seq differential expression was a focus of the <em>Swish</em> nonparametric statistical method <span class="citation">(Zhu et al. 2019)</span> which we do not demonstrate here, but one can refer to the vignette of <a href="https://bioconductor.org/packages/swish">swish</a> for more details (in particular the section on <em>alevin</em> data).</p>
 <p>Let’s start by visualizing the uncertainty across all values in the matrix:</p>
 <div class="sourceCode" id="cb55"><html><body><pre class="r"><span class="no">var</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span>(<span class="fu">assays</span>(<span class="no">sce</span>)<span class="kw">[[</span><span class="st">"variance"</span>]])
 <span class="no">mu</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span>(<span class="fu">assays</span>(<span class="no">sce</span>)<span class="kw">[[</span><span class="st">"mean"</span>]])
@@ -489,12 +489,12 @@
 <span class="fu"><a href="https://rdrr.io/pkg/fishpond/man/plotInfReps.html">plotInfReps</a></span>(<span class="no">sce</span>[,<span class="fl">1</span>:<span class="fl">100</span>], <span class="kw">idx</span><span class="kw">=</span><span class="st">"ENSG00000215472.10"</span>,
             <span class="kw">x</span><span class="kw">=</span><span class="st">"cluster"</span>, <span class="kw">mainCol</span><span class="kw">=</span><span class="st">"SYMBOL"</span>)</pre></body></html></div>
 <p><img src="alevin2bioc_files/figure-html/plot-high-uncert-1.png" width="700"></p>
-<p>The extra uncertainty on the counts for this gene indicate that <em>alevin</em> was not certain if the reads should come from the gene or its read-through. While in this case, the ribosomal gene may not be over interest, there are other cases (e.g. developmental or immune genes with high sequence homology) where information of the uncertainty of quantification can be useful in interpreting the data.</p>
+<p>The extra uncertainty on the counts for this gene indicate that <em>alevin</em> was not certain if the reads should come from the gene or its read-through. While in this case, the ribosomal gene may not be over interest, there are other cases (e.g. developmental or immune genes with high sequence homology) where information of the uncertainty of quantification can be useful in interpreting the data. Such examples are provided in a recent preprint from the <em>alevin</em> and <em>fishpond</em> team <span class="citation">(Van Buren et al. 2020)</span>.</p>
 </div>
 <div id="downstream-analysis-with-seurat" class="section level2">
 <h2 class="hasAnchor">
 <a href="#downstream-analysis-with-seurat" class="anchor"></a>Downstream analysis with Seurat</h2>
-<p>As we previously showed how to construct a <em>SingleCellExperiment</em> which can be used with other Bioconductor workflows, we also demonstrate how it is easy to convert the <code>sce</code> object into an object for use with the <em>Seurat</em> R package <span class="citation">(Stuart et al. 2019)</span> for single cell analysis. As we noted, <em>Seurat</em> was already used to identify the cell types (with the script stored in <code>inst/scripts/seurat.R</code>).</p>
+<p>As we previously showed how to construct a <em>SingleCellExperiment</em> which can be used with other Bioconductor workflows, we also demonstrate how it is easy to convert the <code>sce</code> object into an object for use with the <em>Seurat</em> R package <span class="citation">(Stuart et al. 2019)</span> for single-cell analysis. As we noted, <em>Seurat</em> was already used to identify the cell types (with the script stored in <code>inst/scripts/seurat.R</code>).</p>
 <p>We now load <em>Seurat</em> and create a <em>Seurat</em> object:</p>
 <div class="sourceCode" id="cb62"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">Seurat</span>)</pre></body></html></div>
 <pre><code>## 
@@ -546,89 +546,94 @@
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] Seurat_3.1.5                ggplot2_3.3.1              
-##  [3] scran_1.17.2                fishpond_1.5.35            
-##  [5] org.Hs.eg.db_3.11.4         SingleCellExperiment_1.11.5
-##  [7] SummarizedExperiment_1.19.5 DelayedArray_0.15.5        
+##  [1] Seurat_3.2.0                ggplot2_3.3.2              
+##  [3] scran_1.17.9                fishpond_1.5.35            
+##  [5] org.Hs.eg.db_3.11.4         SingleCellExperiment_1.11.6
+##  [7] SummarizedExperiment_1.19.6 DelayedArray_0.15.7        
 ##  [9] matrixStats_0.56.0          Matrix_1.2-18              
-## [11] tximeta_1.7.6               GenomicFeatures_1.41.0     
-## [13] AnnotationDbi_1.51.0        Biobase_2.49.0             
-## [15] GenomicRanges_1.41.5        GenomeInfoDb_1.25.2        
+## [11] tximeta_1.7.6               GenomicFeatures_1.41.2     
+## [13] AnnotationDbi_1.51.1        Biobase_2.49.0             
+## [15] GenomicRanges_1.41.5        GenomeInfoDb_1.25.8        
 ## [17] IRanges_2.23.10             S4Vectors_0.27.12          
 ## [19] BiocGenerics_0.35.4        
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] backports_1.1.8               AnnotationHub_2.21.1         
-##   [3] BiocFileCache_1.13.0          plyr_1.8.6                   
-##   [5] igraph_1.2.5                  lazyeval_0.2.2               
-##   [7] splines_4.0.0                 BiocParallel_1.23.0          
-##   [9] listenv_0.8.0                 digest_0.6.25                
-##  [11] ensembldb_2.13.1              htmltools_0.5.0              
-##  [13] magrittr_1.5                  memoise_1.1.0                
-##  [15] cluster_2.1.0                 ROCR_1.0-11                  
-##  [17] limma_3.45.7                  globals_0.12.5               
-##  [19] Biostrings_2.57.2             askpass_1.1                  
-##  [21] pkgdown_1.5.1                 prettyunits_1.1.1            
-##  [23] colorspace_1.4-1              ggrepel_0.8.2                
-##  [25] blob_1.2.1                    rappdirs_0.3.1               
-##  [27] xfun_0.14                     dplyr_1.0.0                  
-##  [29] crayon_1.3.4                  RCurl_1.98-1.2               
-##  [31] jsonlite_1.6.1                tximport_1.17.2              
-##  [33] hexbin_1.28.1                 zoo_1.8-8                    
-##  [35] survival_3.1-12               ape_5.4                      
-##  [37] glue_1.4.1                    gtable_0.3.0                 
-##  [39] zlibbioc_1.35.0               XVector_0.29.2               
-##  [41] leiden_0.3.3                  BiocSingular_1.5.0           
-##  [43] future.apply_1.5.0            scales_1.1.1                 
-##  [45] DBI_1.1.0                     edgeR_3.31.4                 
-##  [47] Rcpp_1.0.4.6                  viridisLite_0.3.0            
-##  [49] xtable_1.8-4                  progress_1.2.2               
-##  [51] reticulate_1.16               dqrng_0.2.1                  
-##  [53] bit_1.1-15.2                  rsvd_1.0.3                   
-##  [55] tsne_0.1-3                    htmlwidgets_1.5.1            
-##  [57] httr_1.4.1                    RColorBrewer_1.1-2           
-##  [59] ellipsis_0.3.1                ica_1.0-2                    
-##  [61] pkgconfig_2.0.3               XML_3.99-0.3                 
-##  [63] farver_2.0.3                  scuttle_0.99.9               
-##  [65] uwot_0.1.8                    dbplyr_1.4.4                 
-##  [67] locfit_1.5-9.4                reshape2_1.4.4               
-##  [69] tidyselect_1.1.0              labeling_0.3                 
-##  [71] rlang_0.4.6                   later_1.1.0.1                
-##  [73] munsell_0.5.0                 BiocVersion_3.12.0           
-##  [75] tools_4.0.0                   generics_0.0.2               
-##  [77] RSQLite_2.2.0                 ggridges_0.5.2               
-##  [79] evaluate_0.14                 stringr_1.4.0                
-##  [81] fastmap_1.0.1                 yaml_2.2.1                   
-##  [83] knitr_1.28                    bit64_0.9-7                  
-##  [85] fs_1.4.1                      fitdistrplus_1.1-1           
-##  [87] purrr_0.3.4                   RANN_2.6.1                   
-##  [89] AnnotationFilter_1.13.0       pbapply_1.4-2                
-##  [91] future_1.17.0                 nlme_3.1-147                 
-##  [93] mime_0.9                      biomaRt_2.45.1               
-##  [95] compiler_4.0.0                png_0.1-7                    
-##  [97] plotly_4.9.2.1                curl_4.3                     
-##  [99] interactiveDisplayBase_1.27.5 tibble_3.0.1                 
-## [101] statmod_1.4.34                stringi_1.4.6                
-## [103] desc_1.2.0                    lattice_0.20-41              
-## [105] ProtGenerics_1.21.0           vctrs_0.3.1                  
-## [107] pillar_1.4.4                  lifecycle_0.2.0              
-## [109] BiocManager_1.30.10           lmtest_0.9-37                
-## [111] RcppAnnoy_0.0.16              BiocNeighbors_1.7.0          
-## [113] data.table_1.12.8             cowplot_1.0.0                
-## [115] bitops_1.0-6                  irlba_2.3.3                  
-## [117] patchwork_1.0.0               httpuv_1.5.4                 
-## [119] rtracklayer_1.49.3            R6_2.4.1                     
-## [121] promises_1.1.1                gridExtra_2.3                
-## [123] KernSmooth_2.23-16            codetools_0.2-16             
-## [125] MASS_7.3-51.5                 gtools_3.8.2                 
-## [127] assertthat_0.2.1              openssl_1.4.1                
-## [129] rprojroot_1.3-2               withr_2.2.0                  
-## [131] sctransform_0.2.1             GenomicAlignments_1.25.3     
-## [133] Rsamtools_2.5.2               GenomeInfoDbData_1.2.3       
-## [135] hms_0.5.3                     grid_4.0.0                   
-## [137] tidyr_1.1.0                   rmarkdown_2.2                
-## [139] DelayedMatrixStats_1.11.0     Rtsne_0.15                   
-## [141] shiny_1.4.0.2</code></pre>
+##   [1] reticulate_1.16               tidyselect_1.1.0             
+##   [3] RSQLite_2.2.0                 htmlwidgets_1.5.1            
+##   [5] grid_4.0.0                    BiocParallel_1.23.2          
+##   [7] Rtsne_0.15                    munsell_0.5.0                
+##   [9] codetools_0.2-16              ica_1.0-2                    
+##  [11] statmod_1.4.34                future_1.18.0                
+##  [13] miniUI_0.1.1.1                withr_2.2.0                  
+##  [15] colorspace_1.4-1              knitr_1.29                   
+##  [17] ROCR_1.0-11                   tensor_1.5                   
+##  [19] listenv_0.8.0                 labeling_0.3                 
+##  [21] tximport_1.17.2               GenomeInfoDbData_1.2.3       
+##  [23] polyclip_1.10-0               bit64_0.9-7.1                
+##  [25] farver_2.0.3                  rprojroot_1.3-2              
+##  [27] vctrs_0.3.2                   generics_0.0.2               
+##  [29] xfun_0.15                     BiocFileCache_1.13.0         
+##  [31] R6_2.4.1                      rsvd_1.0.3                   
+##  [33] locfit_1.5-9.4                AnnotationFilter_1.13.0      
+##  [35] bitops_1.0-6                  spatstat.utils_1.17-0        
+##  [37] assertthat_0.2.1              promises_1.1.1               
+##  [39] scales_1.1.1                  gtable_0.3.0                 
+##  [41] globals_0.12.5                goftest_1.2-2                
+##  [43] ensembldb_2.13.1              rlang_0.4.7                  
+##  [45] splines_4.0.0                 rtracklayer_1.49.3           
+##  [47] lazyeval_0.2.2                hexbin_1.28.1                
+##  [49] BiocManager_1.30.10           yaml_2.2.1                   
+##  [51] reshape2_1.4.4                abind_1.4-5                  
+##  [53] backports_1.1.8               httpuv_1.5.4                 
+##  [55] tools_4.0.0                   ellipsis_0.3.1               
+##  [57] RColorBrewer_1.1-2            ggridges_0.5.2               
+##  [59] Rcpp_1.0.5                    plyr_1.8.6                   
+##  [61] progress_1.2.2                zlibbioc_1.35.0              
+##  [63] purrr_0.3.4                   RCurl_1.98-1.2               
+##  [65] prettyunits_1.1.1             rpart_4.1-15                 
+##  [67] openssl_1.4.2                 deldir_0.1-28                
+##  [69] pbapply_1.4-2                 cowplot_1.0.0                
+##  [71] zoo_1.8-8                     ggrepel_0.8.2                
+##  [73] cluster_2.1.0                 fs_1.4.2                     
+##  [75] magrittr_1.5                  data.table_1.12.8            
+##  [77] lmtest_0.9-37                 RANN_2.6.1                   
+##  [79] ProtGenerics_1.21.0           fitdistrplus_1.1-1           
+##  [81] hms_0.5.3                     patchwork_1.0.1              
+##  [83] mime_0.9                      evaluate_0.14                
+##  [85] xtable_1.8-4                  XML_3.99-0.4                 
+##  [87] gridExtra_2.3                 compiler_4.0.0               
+##  [89] biomaRt_2.45.2                tibble_3.0.3                 
+##  [91] KernSmooth_2.23-17            crayon_1.3.4                 
+##  [93] htmltools_0.5.0               mgcv_1.8-31                  
+##  [95] later_1.1.0.1                 tidyr_1.1.0                  
+##  [97] DBI_1.1.0                     dbplyr_1.4.4                 
+##  [99] MASS_7.3-51.6                 rappdirs_0.3.1               
+## [101] igraph_1.2.5                  pkgconfig_2.0.3              
+## [103] pkgdown_1.5.1                 GenomicAlignments_1.25.3     
+## [105] plotly_4.9.2.1                scuttle_0.99.11              
+## [107] dqrng_0.2.1                   XVector_0.29.3               
+## [109] stringr_1.4.0                 digest_0.6.25                
+## [111] sctransform_0.2.1             RcppAnnoy_0.0.16             
+## [113] spatstat.data_1.4-3           Biostrings_2.57.2            
+## [115] rmarkdown_2.3                 leiden_0.3.3                 
+## [117] uwot_0.1.8                    edgeR_3.31.4                 
+## [119] DelayedMatrixStats_1.11.1     curl_4.3                     
+## [121] shiny_1.5.0                   Rsamtools_2.5.3              
+## [123] gtools_3.8.2                  lifecycle_0.2.0              
+## [125] nlme_3.1-148                  jsonlite_1.7.0               
+## [127] BiocNeighbors_1.7.0           desc_1.2.0                   
+## [129] viridisLite_0.3.0             askpass_1.1                  
+## [131] limma_3.45.9                  pillar_1.4.6                 
+## [133] lattice_0.20-41               fastmap_1.0.1                
+## [135] httr_1.4.1                    survival_3.2-3               
+## [137] interactiveDisplayBase_1.27.5 glue_1.4.1                   
+## [139] spatstat_1.64-1               png_0.1-7                    
+## [141] BiocVersion_3.12.0            bit_1.1-15.2                 
+## [143] stringi_1.4.6                 blob_1.2.1                   
+## [145] BiocSingular_1.5.0            AnnotationHub_2.21.1         
+## [147] memoise_1.1.0                 dplyr_1.0.0                  
+## [149] irlba_2.3.3                   future.apply_1.6.0           
+## [151] ape_5.4</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
@@ -666,6 +671,9 @@
 </div>
 <div id="ref-seurat">
 <p>Stuart, Tim, Andrew Butler, Paul Hoffman, Christoph Hafemeister, Efthymia Papalexi, William M Mauck III, Yuhan Hao, Marlon Stoeckius, Peter Smibert, and Rahul Satija. 2019. “Comprehensive Integration of Single-Cell Data.” <em>Cell</em> 177: 1888–1902. <a href="https://doi.org/10.1016/j.cell.2019.05.031">https://doi.org/10.1016/j.cell.2019.05.031</a>.</p>
+</div>
+<div id="ref-compression">
+<p>Van Buren, S, H Sarkar, A Srivastava, NU Rashid, R Patro, and MI Love. 2020. “Compression of quantification uncertainty for scRNA-seq counts.” <em>bioRxiv</em>. <a href="https://doi.org/10.1101/2020.07.06.189639">https://doi.org/10.1101/2020.07.06.189639</a>.</p>
 </div>
 <div id="ref-swish">
 <p>Zhu, A., A. Srivastava, J. G. Ibrahim, R. Patro, and M. I. Love. 2019. “Nonparametric expression analysis using inferential replicate counts.” <em>Nucleic Acids Research</em>. <a href="https://doi.org/10.1093/nar/gkz622">https://doi.org/10.1093/nar/gkz622</a>.</p>
