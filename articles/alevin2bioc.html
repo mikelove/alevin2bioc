@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">alevin2bioc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.24</span>
       </span>
     </div>
 
@@ -188,6 +188,13 @@
 <p>Even more details about <em>alevin</em> arguments can be found <a href="https://salmon.readthedocs.io/en/latest/alevin.html">here</a>.</p>
 <p><img width="600" src="alevin.gif"></p>
 <p>For the rest of the tutorial we will focus on importing data into R/Bioconductor. The output directory of running <em>alevin</em> on the PBMC sequence data is included in this workflow package in the <code>extdata</code> directory. <em>alevin</em> took about 14 minutes to quantify 33 million reads from around 1700 cells. 30 bootstrap inferential replicates were generated, summarized to sparse inferential mean and variance matrices (discussed later).</p>
+</div>
+<div id="alevinqc" class="section level2">
+<h2 class="hasAnchor">
+<a href="#alevinqc" class="anchor"></a>alevinQC</h2>
+<p>There is a very useful Bioconductor package, <em>alevinQC</em>, which can be used to examine quality control (QC) metrics for <em>alevin</em> data. We do not explore this package in this workflow, but we do want to highlight that QC at this step in the analysis is a good idea. For more details on running <em>alevinQC</em> consult the package website. A screenshot from <em>alevinQC</em> is included below.</p>
+<p><a href="https://csoneson.github.io/alevinQC/" class="uri">https://csoneson.github.io/alevinQC/</a></p>
+<p><img width="600" src="https://raw.githubusercontent.com/csoneson/alevinQC/master/inst/extdata/alevinQC_screenshot2.png"></p>
 </div>
 <div id="importing-alevin-data-with-tximeta" class="section level2">
 <h2 class="hasAnchor">
@@ -547,11 +554,11 @@
 ## 
 ## other attached packages:
 ##  [1] Seurat_3.2.0                ggplot2_3.3.2              
-##  [3] scran_1.17.9                fishpond_1.5.35            
+##  [3] scran_1.17.9                fishpond_1.5.37            
 ##  [5] org.Hs.eg.db_3.11.4         SingleCellExperiment_1.11.6
 ##  [7] SummarizedExperiment_1.19.6 DelayedArray_0.15.7        
 ##  [9] matrixStats_0.56.0          Matrix_1.2-18              
-## [11] tximeta_1.7.6               GenomicFeatures_1.41.2     
+## [11] tximeta_1.7.7               GenomicFeatures_1.41.2     
 ## [13] AnnotationDbi_1.51.1        Biobase_2.49.0             
 ## [15] GenomicRanges_1.41.5        GenomeInfoDb_1.25.8        
 ## [17] IRanges_2.23.10             S4Vectors_0.27.12          
@@ -568,7 +575,7 @@
 ##  [15] colorspace_1.4-1              knitr_1.29                   
 ##  [17] ROCR_1.0-11                   tensor_1.5                   
 ##  [19] listenv_0.8.0                 labeling_0.3                 
-##  [21] tximport_1.17.2               GenomeInfoDbData_1.2.3       
+##  [21] tximport_1.17.3               GenomeInfoDbData_1.2.3       
 ##  [23] polyclip_1.10-0               bit64_0.9-7.1                
 ##  [25] farver_2.0.3                  rprojroot_1.3-2              
 ##  [27] vctrs_0.3.2                   generics_0.0.2               
