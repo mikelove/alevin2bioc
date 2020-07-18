@@ -146,6 +146,19 @@ quantify 33 million reads from around 1700 cells. 30 bootstrap
 inferential replicates were generated, summarized to sparse
 inferential mean and variance matrices (discussed later).
 
+## alevinQC
+
+There is a very useful Bioconductor package, *alevinQC*, which can be
+used to examine quality control (QC) metrics for *alevin* data. We do
+not explore this package in this workflow, but we do want to highlight
+that QC at this step in the analysis is a good idea. For more details
+on running *alevinQC* consult the package website. A screenshot from
+*alevinQC* is included below.
+
+<https://csoneson.github.io/alevinQC/>
+
+<img width=600 src="https://raw.githubusercontent.com/csoneson/alevinQC/master/inst/extdata/alevinQC_screenshot2.png">
+
 ## Importing alevin data with tximeta
 
 We will use *tximeta* to import the *alevin* counts into

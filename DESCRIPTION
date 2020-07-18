@@ -1,7 +1,7 @@
 Package: alevin2bioc
 Type: Package
 Title: Importing alevin scRNA-seq counts into R/Bioconductor
-Version: 0.1.23
+Version: 0.1.24
 Authors@R: c(
     person("Michael", "Love",
     email="michaelisaiahlove@gmail.com",
