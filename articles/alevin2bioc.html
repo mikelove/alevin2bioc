@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">alevin2bioc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.26</span>
       </span>
     </div>
 
@@ -238,7 +238,8 @@
 <p>The data is now available as assays in <code>sce</code>. We can see what is available:</p>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu">assayNames</span>(<span class="no">sce</span>)</pre></body></html></div>
 <pre><code>## [1] "counts"   "variance" "mean"</code></pre>
-<p>And we can access individual gene-by-cell data by pulling out a particular assay. Note that, due to the use of EM (which avoids discarding multi-mapping reads), we will have some fractional counts in the counts matrix.</p>
+<p>And we can access individual gene-by-cell data by pulling out a particular assay. Note that, due to the use of an expectation-maximization (EM) algorithm, which avoids discarding multi-mapping reads, we will have some fractional counts in the counts matrix.</p>
+<p>EM is commonly used in bioinformatics and statistics to solve inference problems when some information is missing. In this case, the missing information is the true gene from which the reads originate.</p>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu">assays</span>(<span class="no">sce</span>)<span class="kw">[[</span><span class="st">"counts"</span>]][<span class="fl">1</span>:<span class="fl">20</span>,<span class="fl">1</span>:<span class="fl">4</span>]</pre></body></html></div>
 <pre><code>## 20 x 4 sparse Matrix of class "dgCMatrix"
 ##                   AAGACAACAGATCACT CAGGTATGTCAGTCTA TATCTTGTCCATCTCG
