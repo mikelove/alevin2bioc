@@ -205,6 +205,15 @@ We can import the *alevin* quantification using the following call to
 on *alevin*'s post-quantification quality control methods (see paper
 for details).
 
+**Note:** the first time we run this command on a computer (on in the
+Docker container you are working on), there will be a prompt asking if
+you want to use the default directory for the cache. Answer yes by
+typing `1`. Then it will ask if you permit R to create the cache
+directory and you should type `y`. *tximeta* uses a cache to avoid
+re-downloading and re-parsing annotation resources (note that on a
+cluster, this cache can be shared among users for maximal
+efficiency).
+
 ```{r}
 library(tximeta)
 se <- tximeta(files, type="alevin", alevinArgs=list(filterBarcodes=TRUE))
