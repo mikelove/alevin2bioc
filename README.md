@@ -15,6 +15,14 @@ and provides an online vignette describing how to import
 scRNA-seq quantifications into R/Bioconductor. The developers of the
 workflow are listed in the sidebar. 
 
+## Packages
+
+The following software are used in this workflow:
+
+<img width="150" alt="alevin" src="https://i.imgur.com/Y9VPCsR.png"/> <img width="150" alt="tximeta" src="https://github.com/Bioconductor/BiocStickers/blob/master/tximeta/tximeta.png?raw=true"/> <img width="150" alt="SingleCellExperiment" src="https://github.com/Bioconductor/BiocStickers/blob/master/SingleCellExperiment/SingleCellExperiment.png?raw=true"/> <img width="150" alt="fishpond" src="https://github.com/Bioconductor/BiocStickers/blob/master/fishpond/fishpond.png?raw=true"/> <img width="150" alt="scran" src="https://github.com/Bioconductor/BiocStickers/blob/master/scran/scran.png?raw=true"/> <img width="150" alt="Seurat" src="https://i.imgur.com/FEFIXCc.jpeg"/>
+
+
+
 ## Vignette
 
 The workflow vignette can be accessed by clicking `Get started` in the
